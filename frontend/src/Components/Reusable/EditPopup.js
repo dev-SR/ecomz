@@ -61,17 +61,18 @@ export default function EditPopup({
                            className={classes.form}
                            noValidate
                            onSubmit={handleSubmit}>
-                           {inputs.map(input => (
-                              <Input
-                                 key={input.name}
-                                 label={input.label}
-                                 id={input.id}
-                                 name={input.name}
-                                 placeholder={input.placeholder}
-                                 value={input.value}
-                                 onChange={onChange}
-                              />
-                           ))}
+                           {inputs &&
+                              inputs.map(input => (
+                                 <Input
+                                    key={input.name}
+                                    label={input.label}
+                                    id={input.id}
+                                    name={input.name}
+                                    placeholder={input.placeholder}
+                                    value={input.value}
+                                    onChange={onChange}
+                                 />
+                              ))}
                         </form>
                      </Grid>
                      {/* <Grid item md={12} xs={12}>

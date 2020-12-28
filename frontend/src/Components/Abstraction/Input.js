@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField } from '@material-ui/core';
-import { MenuItem } from '@material-ui/core/MenuItem';
+export const useInput = init => {
+   const [inputState, setInputState] = useState(init);
+   const onChangeHandler = ({
+      target: { value, type, name, checked = null }
+   }) => {
+      const newValue = type === 'checkbox' ? checked : value;
+      setInputState({ ...inputState, [name]: newValue });
+   };
 
+   return {
+      inputState,
+      setInputState,
+      onChangeHandler
+   };
+};
 export default function Input({
    name,
    label,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DrawerDataAdmin } from '../../Components/Abstraction/Drawer';
 import { AdminNav } from '../../Components/Shared/AdminNav';
 import Layout from '../../Components/Shared/Layout';
@@ -13,7 +13,7 @@ import {
    ListItemText,
    Paper
 } from '@material-ui/core';
-import Input from '../../Components/Abstraction/Input';
+import Input, { useInput } from '../../Components/Abstraction/Input';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { useForm } from '../../Components/Reusable/useForm';
@@ -22,7 +22,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
 import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { makeStyles } from '@material-ui/core/styles';
-import EditPopup, { useEditPopup } from '../../Components/Reusable/EditPopup';
+import { useHistory, useLocation } from 'react-router-dom';
+import { getCategories } from '../../Redux/actions/user-action';
+import { createCategory } from './../../Redux/actions/user-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),
@@ -41,68 +43,61 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-const initialValue = [
-   {
-      type: 'text',
-      name: 'categories',
-      id: 'this-email',
-      label: 'categories',
-      placeholder: 'Add new Categories...',
-      value: ''
-   }
-];
-// let s;
+const initialValue = { categories: '' };
 
-const dummy = [
-   { name: 'Akjsfd' },
-   { name: 'Bjsdnfa' },
-   { name: 'Csnfa' },
-   { name: 'Doiup9oij' },
-   { name: 'Eknf' }
-];
 export default function ManageCategories() {
    const classes = useStyles();
-   //   const dispatch = useDispatch();
-   //   const history = useHistory();
-   //   const user = useSelector(s => s.user);
-   //   const { loading, success, error } = user;
-   //   const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
-   //   const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
-   const [dumy, setDummy] = useState(dummy);
+   const dispatch = useDispatch();
+   const history = useHistory();
+   const s = useSelector(s => s.category);
+
+   const { loading, error, cat } = s;
+
+   const { state } = useLocation();
+   const updated = state ? state.updated : null;
+
+   const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
+   const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
    const [query, setQuery] = useState('');
 
-   const { inputs, onChange } = useForm(initialValue);
-   const [categories] = inputs;
+   const { inputState, setInputState, onChangeHandler } = useInput(
+      initialValue
+   );
 
-   //   useEffect(() => {
-   //      if (success) {
-   //         history.push('/');
-   //      }
-   //      if (loading) setopenLoader(true);
-   //      else setopenLoader(false);
+   useEffect(() => {
+      dispatch(getCategories());
+   }, []);
+   useEffect(() => {
+      if (loading) setopenLoader(true);
+      else setopenLoader(false);
 
-   //      if (error) {
-   //         setopenSnackBar(true);
-   //      } else setopenSnackBar(false);
-   //   }, [loading, success, error]);
+      if (error) {
+         setopenSnackBar(true);
+      }
+      if (updated) {
+         setopenSnackBar(true);
+      }
+   }, [loading, updated, error]);
    const onChangeQuery = ({ target: { value } }) => {
       setQuery(value);
    };
-   const handleDelete = (index, name) => {
-      setDummy(dumy.filter((el, i) => index != i));
-      console.log(name);
+   const handleDelete = id => {
+      // setDummy(dumy.filter((el, i) => index != i));
+      console.log(id);
    };
 
-   const { editDialogOpen, openEditPopup, closeEditPopup } = useEditPopup();
-   const handleEdit = (index, name) => {
-      console.log(name);
-      openEditPopup();
+   const handleEdit = (id, name, image) => {
+      // console.log(name);
+      history.push({
+         pathname: `/admin/categories/${id}`,
+         state: { nameInputValue: name, imageInputValue: image }
+      });
+      // openEditPopup();
    };
    const submitHandler = async e => {
       e.preventDefault();
-      console.log(categories.value);
-      closeEditPopup();
-      //  if (!errorExist) dispatch(login(email.value, pass.value));
+      console.log(inputState.categories);
+      dispatch(createCategory(inputState.categories));
    };
    return (
       <div>
@@ -123,17 +118,13 @@ export default function ManageCategories() {
                         className={classes.form}
                         noValidate
                         onSubmit={submitHandler}>
-                        {inputs.map(input => (
-                           <Input
-                              key={input.name}
-                              label={input.label}
-                              id={input.id}
-                              name={input.name}
-                              placeholder={input.placeholder}
-                              value={input.value}
-                              onChange={onChange}
-                           />
-                        ))}
+                        <Input
+                           label='Add New Categories'
+                           name='categories'
+                           placeholder='Add New Categories'
+                           value={inputState.categories}
+                           onChange={onChangeHandler}
+                        />
                      </form>
                   </Grid>
                   <Grid item md={12} xs={12}>
@@ -154,47 +145,57 @@ export default function ManageCategories() {
                         onChange={onChangeQuery}
                      />
                   </Grid>
-                  {dumy
-                     .filter(el => el.name.toLowerCase().includes(query))
-                     .map((item, index) => (
-                        <Grid item md={3} xs={12}>
-                           <Paper>
-                              <List>
-                                 <ListItem>
-                                    <ListItemText primary={item.name} />
-                                    <ListItemSecondaryAction>
-                                       <IconButton
-                                          edge='end'
-                                          aria-label='delete'
-                                          onClick={e =>
-                                             handleEdit(index, item.name)
-                                          }>
-                                          <EditIcon color='secondary' />
-                                       </IconButton>
-                                       <IconButton
-                                          edge='end'
-                                          aria-label='delete'
-                                          onClick={e =>
-                                             handleDelete(index, item.name)
-                                          }>
-                                          <DeleteIcon />
-                                       </IconButton>
-                                    </ListItemSecondaryAction>
-                                 </ListItem>
-                              </List>
-                           </Paper>
-                        </Grid>
-                     ))}
+                  {cat &&
+                     cat
+                        .filter(el => el.cat_name.toLowerCase().includes(query))
+                        .map((item, index) => (
+                           <Grid item md={3} xs={12}>
+                              <Paper>
+                                 <List>
+                                    <ListItem>
+                                       <ListItemText primary={item.cat_name} />
+                                       <ListItemSecondaryAction>
+                                          <IconButton
+                                             edge='end'
+                                             aria-label='delete'
+                                             onClick={e =>
+                                                handleEdit(
+                                                   item.cat_id,
+                                                   item.cat_name,
+                                                   item.image
+                                                )
+                                             }>
+                                             <EditIcon color='secondary' />
+                                          </IconButton>
+                                          <IconButton
+                                             edge='end'
+                                             aria-label='delete'
+                                             onClick={e =>
+                                                handleDelete(item.cat_id)
+                                             }>
+                                             <DeleteIcon />
+                                          </IconButton>
+                                       </ListItemSecondaryAction>
+                                    </ListItem>
+                                 </List>
+                              </Paper>
+                           </Grid>
+                        ))}
                </Grid>
-               <EditPopup
-                  title='Edit Categories'
-                  editDialogOpen={editDialogOpen}
-                  openEditPopup={openEditPopup}
-                  closeEditPopup={closeEditPopup}
-                  inputs={inputs}
-                  handleSubmit={submitHandler}
-               />
             </Paper>
+            <Snackbar
+               severity='error'
+               open={s.error ? openSnackBar : null}
+               handleClose={handleSnackBarClose}
+               msg={s.error ? s.error : 'Error Connecting'}
+            />
+            <Snackbar
+               severity='success'
+               open={updated ? openSnackBar : null}
+               handleClose={handleSnackBarClose}
+               msg={`${updated} Updated`}
+            />
+            <Loader open={openLoader} handleClose={handleLoaderClose} />
          </Layout>
       </div>
    );

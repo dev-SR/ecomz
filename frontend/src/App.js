@@ -16,6 +16,7 @@ import AdminDashBoard from './Pages/Admin/AdminDashBoard';
 import ManageProducts from './Pages/Products/ManageProducts';
 import ManageCategories from './Pages/Categories/ManageCategories';
 import ManageSubCategories from './Pages/Categories/ManageSubCategories';
+import UpdateCategory from './Pages/Categories/UpdateCategory';
 
 function App() {
    const [theme] = useToggleTheme();
@@ -40,6 +41,11 @@ function App() {
                   exact
                   path='/admin/categories'
                   component={ManageCategories}
+               />
+               <AdminRoute
+                  exact
+                  path='/admin/categories/:id'
+                  component={UpdateCategory}
                />
                <AdminRoute
                   exact

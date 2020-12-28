@@ -10,6 +10,10 @@ export const USER_REGISTER_FAIL = 'USER_REGISTER_FAIL';
 
 export const USER_LOGOUT = 'USER_LOGOUT';
 
+export const CAT_REQUEST = 'CAT_REQUEST';
+export const CAT_SUCCESS = 'GET_CAT_SUCCESS';
+export const CAT_FAIL = 'GET_CAT_FAIL';
+
 export const login = (email, password) => async dispatch => {
    try {
       dispatch({
@@ -93,47 +97,89 @@ export const register = (fname, lname, email, pass) => async dispatch => {
    }
 };
 
-// export const getAllWords = () => async (dispatch, getState) => {
-//    try {
-//       dispatch({
-//          type: GET_ALL_WORDS_REQUEST
-//       });
+export const getCategories = () => async (dispatch, getState) => {
+   try {
+      dispatch({
+         type: CAT_REQUEST
+      });
 
-//       const {
-//          userLogin: { token, uid }
-//       } = getState();
+      const {
+         user: { token }
+      } = getState();
 
-//       const config = {
-//          headers: {
-//             'Content-Type': 'application/json',
-//             Authorization: `Bearer ${token}`
-//          }
-//       };
+      const config = {
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+         }
+      };
 
-//       const { data } = await axios.get(`/api/v1/${uid}/words`, config);
+      const { data } = await axios.get(`/api/v1/category/parent`, config);
 
-//       console.log(data);
-//       dispatch({
-//          type: GET_ALL_WORDS_SUCCESS,
-//          payload: data
-//       });
+      // console.log(data);
+      dispatch({
+         type: CAT_SUCCESS,
+         payload: data
+      });
 
-//       localStorage.setItem('allwords', JSON.stringify(data));
-//    } catch (error) {
-//       const message =
-//          error.response && error.response.data
-//             ? error.response.data
-//             : error.message;
-//       if (message === 'Not authorized, token failed') {
-//          dispatch(logout());
-//       }
+      // localStorage.setItem('categories', JSON.stringify(data));
+   } catch (error) {
+      const message =
+         error.response && error.response.data
+            ? error.response.data
+            : error.message;
+      if (message === 'Not authorized, token failed') {
+         dispatch(logout());
+      }
 
-//       dispatch({
-//          type: GET_ALL_WORDS_FAIL,
-//          payload: message
-//       });
-//    }
-// };
+      dispatch({
+         type: CAT_FAIL,
+         payload: message
+      });
+   }
+};
+
+export const createCategory = v => async (dispatch, getState) => {
+   try {
+      dispatch({
+         type: CAT_REQUEST
+      });
+
+      const {
+         user: { token },
+         category
+      } = getState();
+
+      const config = {
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+         }
+      };
+
+      const { data } = await axios.post(
+         `/api/v1/category/parent`,
+         { newCat: v },
+         config
+      );
+
+      dispatch({
+         type: CAT_SUCCESS,
+         payload: data
+      });
+
+      // localStorage.setItem('categories', JSON.stringify(data));
+   } catch (error) {
+      console.log(error.response.data);
+      dispatch({
+         type: CAT_FAIL,
+         payload:
+            error.response && error.response.data //get custom error message
+               ? error.response.data
+               : error.message
+      });
+   }
+};
 
 // export const updateUserProfile = user => async (dispatch, getState) => {
 //    try {
