@@ -7,6 +7,8 @@ const { protect } = require('../Middleware/protect');
 const {
    getAllCategory,
    createCategory,
+   updateCategory,
+   deleteCategory,
    getAllSubCategory,
    createSubCategory
 } = require('../Controllers/category');
@@ -14,7 +16,10 @@ const {
 router
    .route('/parent')
    .get(protect, admin, getAllCategory)
-   .post(protect, admin, createCategory);
+   .post(protect, admin, createCategory)
+   .delete( protect, admin, deleteCategory );
+    
+router.route('/parent/:id').put(protect, admin, updateCategory);
 router.route('/sub').get(protect, admin, getAllSubCategory);
 router.route('/sub/:parentId').post(protect, admin, createSubCategory);
 

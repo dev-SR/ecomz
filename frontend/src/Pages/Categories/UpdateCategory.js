@@ -6,10 +6,12 @@ import { useLocation, useParams, useHistory } from 'react-router-dom';
 
 import { Button, Grid, Paper } from '@material-ui/core';
 import Input, { useInput } from '../../Components/Abstraction/Input';
-
-import { useDispatch } from 'react-redux';
+import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
+import Loader, { useLoader } from '../../Components/Reusable/Loader';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { updateCat } from '../../Redux/actions/user-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),
@@ -37,6 +39,11 @@ export default function UpdateCategory() {
       state: { nameInputValue, imageInputValue }
    } = useLocation();
    const { id } = useParams();
+   const us = useSelector(s => s.updateCat);
+   const { updated, loading, error } = us;
+
+   const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
+   const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
 
    const { inputState, setInputState, onChangeHandler } = useInput(
       initialValue
@@ -49,12 +56,24 @@ export default function UpdateCategory() {
       });
    }, []);
 
+   useEffect(() => {
+      if (loading) setopenLoader(true);
+      else setopenLoader(false);
+
+      if (error) {
+         setopenSnackBar(true);
+      }
+      if (updated) {
+         setopenSnackBar(true);
+         setTimeout(() => {
+            history.push(`/admin/categories`);
+         }, 1000);
+      }
+   }, [updated, error, loading]);
+
    const submitHandler = async e => {
       e.preventDefault();
-      history.push({
-         pathname: `/admin/categories`,
-         state: { updated: nameInputValue }
-      });
+      dispatch(updateCat(id, inputState.name, inputState.image));
    };
    return (
       <div>
@@ -102,6 +121,19 @@ export default function UpdateCategory() {
                   </Grid>
                </Grid>
             </Paper>
+            <Snackbar
+               severity='error'
+               open={error ? openSnackBar : null}
+               handleClose={handleSnackBarClose}
+               msg={error ? error : 'Error Updating'}
+            />
+            <Snackbar
+               severity='success'
+               open={updated ? openSnackBar : null}
+               handleClose={handleSnackBarClose}
+               msg={`${nameInputValue} Updated`}
+            />
+            <Loader open={openLoader} handleClose={handleLoaderClose} />
          </Layout>
       </div>
    );

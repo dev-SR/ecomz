@@ -23,15 +23,10 @@ exports.getAllCategory = asyncHandler(async (req, res, next) => {
  @access     Private Admin
  */
 exports.createCategory = asyncHandler(async (req, res, next) => {
-   // const categoryName = req.params;
-   // const query = req.query;
-   // const [priceLower, priceUpper] = req.query.price.split(',');
-   // console.log(priceLower);
-   // console.log(priceUpper);
-   const { newCat } = req.body;
+   const { newCat, image } = req.body;
    // if (found) return next(new ErrorResponse('Categories Already Exists', 401));
    try {
-      const r = await CategoryRepo.createCategories(newCat);
+      const r = await CategoryRepo.createCategories(newCat, image);
       res.json({ success: true, cat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllCategories();
@@ -44,16 +39,54 @@ exports.createCategory = asyncHandler(async (req, res, next) => {
 });
 
 /**
- @desc       Get all Categories
+ @desc       Update Categories
+ @route      PUT: {{URL}}/api/v1/category/parent/:id
+ @access     Private Admin
+ */
+exports.updateCategory = asyncHandler(async (req, res, next) => {
+   const { id } = req.params;
+   const { editCat, editImage } = req.body;
+   // console.log(id + editCat + editImage);
+   try {
+      const r = await CategoryRepo.updateCategories(id, editCat, editImage);
+      res.json({ success: true, cat: r });
+   } catch (err) {
+      const r = await CategoryRepo.getAllCategories();
+      return res.json({
+         success: true,
+         cat: r,
+         error: 'Update Failed'
+      });
+   }
+});
+
+/**
+ @desc       Update Categories
+ @route      PUT: {{URL}}/api/v1/category/parent
+ @access     Private Admin
+ */
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
+   const { deleteId } = req.body;
+   // console.log(id + editCat + editImage);
+   try {
+      const r = await CategoryRepo.deleteCategory(deleteId);
+      res.json({ success: true, cat: r });
+   } catch (err) {
+      const r = await CategoryRepo.getAllCategories();
+      return res.json({
+         success: true,
+         cat: r,
+         error: 'Update Failed'
+      });
+   }
+});
+
+/**
+ @desc       Get all Sub Categories
  @route      GET: {{URL}}/api/v1/category/parent
  @access     Private Admin
  */
 exports.getAllSubCategory = asyncHandler(async (req, res, next) => {
-   // const categoryName = req.params;
-   // const query = req.query;
-   // const [priceLower, priceUpper] = req.query.price.split(',');
-   // console.log(priceLower);
-   // console.log(priceUpper);
    const r = await CategoryRepo.getAllSubCategories();
    res.json({ success: true, subcat: r });
 });

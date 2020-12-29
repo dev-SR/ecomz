@@ -1,11 +1,18 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension'; //reducers
-import { userReducer, categoryReducer } from './Redux/reducer/user-reduer';
+import {
+   userReducer,
+   categoryReducer,
+   categoryUpdateReducer,
+   categoryDeleteReducer
+} from './Redux/reducer/user-reduer';
 
 const reducers = combineReducers({
    user: userReducer,
-   category: categoryReducer
+   category: categoryReducer,
+   updateCat: categoryUpdateReducer,
+   deleteCat: categoryDeleteReducer
 });
 
 const initialState = {

@@ -11,8 +11,18 @@ export const USER_REGISTER_FAIL = 'USER_REGISTER_FAIL';
 export const USER_LOGOUT = 'USER_LOGOUT';
 
 export const CAT_REQUEST = 'CAT_REQUEST';
-export const CAT_SUCCESS = 'GET_CAT_SUCCESS';
-export const CAT_FAIL = 'GET_CAT_FAIL';
+export const CAT_SUCCESS = 'CAT_SUCCESS';
+export const CAT_FAIL = 'CAT_FAIL';
+
+export const CAT_UPDATE_REQUEST = 'CAT_UPDATE_REQUEST';
+export const CAT_UPDATE_SUCCESS = 'CAT_UPDATE_SUCCESS';
+export const CAT_UPDATE_FAIL = 'CAT_UPDATE_FAIL';
+export const CAT_UPDATE_RESET = 'CAT_UPDATE_RESET';
+
+export const CAT_DELETE_REQUEST = 'CAT_DELETE_REQUEST';
+export const CAT_DELETE_SUCCESS = 'CAT_DELETE_SUCCESS';
+export const CAT_DELETE_FAIL = 'CAT_DELETE_FAIL';
+export const CAT_DELETE_RESET = 'CAT_DELETE_RESET';
 
 export const login = (email, password) => async dispatch => {
    try {
@@ -100,6 +110,12 @@ export const register = (fname, lname, email, pass) => async dispatch => {
 export const getCategories = () => async (dispatch, getState) => {
    try {
       dispatch({
+         type: CAT_DELETE_RESET
+      });
+      dispatch({
+         type: CAT_UPDATE_RESET
+      });
+      dispatch({
          type: CAT_REQUEST
       });
 
@@ -128,7 +144,10 @@ export const getCategories = () => async (dispatch, getState) => {
          error.response && error.response.data
             ? error.response.data
             : error.message;
-      if (message === 'Not authorized, token failed') {
+      if (
+         message === 'Not authorized, token failed' ||
+         message === 'Not authorized, you must be an admin'
+      ) {
          dispatch(logout());
       }
 
@@ -139,15 +158,14 @@ export const getCategories = () => async (dispatch, getState) => {
    }
 };
 
-export const createCategory = v => async (dispatch, getState) => {
+export const createCategory = (name, image) => async (dispatch, getState) => {
    try {
       dispatch({
          type: CAT_REQUEST
       });
 
       const {
-         user: { token },
-         category
+         user: { token }
       } = getState();
 
       const config = {
@@ -159,7 +177,7 @@ export const createCategory = v => async (dispatch, getState) => {
 
       const { data } = await axios.post(
          `/api/v1/category/parent`,
-         { newCat: v },
+         { newCat: name, image },
          config
       );
 
@@ -170,17 +188,132 @@ export const createCategory = v => async (dispatch, getState) => {
 
       // localStorage.setItem('categories', JSON.stringify(data));
    } catch (error) {
-      console.log(error.response.data);
+      const message =
+         error.response && error.response.data
+            ? error.response.data
+            : error.message;
+      if (
+         message === 'Not authorized, token failed' ||
+         message === 'Not authorized, you must be an admin'
+      ) {
+         dispatch(logout());
+      }
+
       dispatch({
          type: CAT_FAIL,
-         payload:
-            error.response && error.response.data //get custom error message
-               ? error.response.data
-               : error.message
+         payload: message
       });
    }
 };
 
+export const updateCat = (id, editCat, editImage) => async (
+   dispatch,
+   getState
+) => {
+   try {
+      //clear previous states
+      dispatch({
+         type: CAT_UPDATE_RESET
+      });
+
+      dispatch({
+         type: CAT_UPDATE_REQUEST
+      });
+
+      const {
+         user: { token }
+      } = getState();
+
+      const config = {
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+         }
+      };
+
+      const { data } = await axios.put(
+         `/api/v1/category/parent/${id}`,
+         { editCat, editImage },
+         config
+      );
+
+      // console.log(data);
+      dispatch({
+         type: CAT_UPDATE_SUCCESS,
+         payload: data
+      });
+
+      // localStorage.setItem('categories', JSON.stringify(data));
+   } catch (error) {
+      const message =
+         error.response && error.response.data
+            ? error.response.data
+            : error.message;
+      if (
+         message === 'Not authorized, token failed' ||
+         message === 'Not authorized, you must be an admin'
+      ) {
+         dispatch(logout());
+      }
+      dispatch({
+         type: CAT_UPDATE_FAIL,
+         payload: message
+      });
+   }
+};
+
+export const deleteCat = id => async (dispatch, getState) => {
+   try {
+      //clear previous states
+      dispatch({
+         type: CAT_DELETE_RESET
+      });
+
+      dispatch({
+         type: CAT_DELETE_REQUEST
+      });
+
+      const {
+         user: { token }
+      } = getState();
+
+      const config = {
+         headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+         }
+      };
+
+      const { data } = await axios.delete(
+         `/api/v1/category/parent`,
+         { deleteId: id },
+         config
+      );
+
+      // console.log(data);
+      dispatch({
+         type: CAT_DELETE_SUCCESS,
+         payload: data
+      });
+
+      // localStorage.setItem('categories', JSON.stringify(data));
+   } catch (error) {
+      const message =
+         error.response && error.response.data
+            ? error.response.data
+            : error.message;
+      if (
+         message === 'Not authorized, token failed' ||
+         message === 'Not authorized, you must be an admin'
+      ) {
+         dispatch(logout());
+      }
+      dispatch({
+         type: CAT_DELETE_FAIL,
+         payload: message
+      });
+   }
+};
 // export const updateUserProfile = user => async (dispatch, getState) => {
 //    try {
 //       dispatch({

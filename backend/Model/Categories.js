@@ -19,13 +19,37 @@ class CategoryRepo {
    }
 
    //Create New Categories
-   static async createCategories(newCat) {
-      const { rows } = await db.query('SELECT * FROM create_categories($1);', [
-         newCat
+   static async createCategories(newCat, image) {
+      const { rows } = await db.query(
+         'SELECT * FROM create_categories($1,$2);',
+         [newCat, image]
+      );
+      // console.log(rows);
+      return rows;
+   }
+
+   //Update  Categories
+   static async updateCategories(id, editName, editImage) {
+      const {
+         rows
+      } = await db.query('SELECT * FROM update_categories($1,$2,$3);', [
+         id,
+         editName,
+         editImage
       ]);
       // console.log(rows);
       return rows;
    }
+
+   //Delete  Categories
+   static async deleteCategory(id) {
+      const {
+         rows
+      } = await db.query('SELECT * FROM detete_from_Categories($1);', [id]);
+      // console.log(rows);
+      return rows;
+   }
+
    //Create New Categories
    static async getAllSubCategories() {
       const { rows } = await db.query('SELECT * FROM get_sub_categories();');

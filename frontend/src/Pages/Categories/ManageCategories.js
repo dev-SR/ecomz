@@ -23,7 +23,7 @@ import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
 import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
-import { getCategories } from '../../Redux/actions/user-action';
+import { deleteCat, getCategories } from '../../Redux/actions/user-action';
 import { createCategory } from './../../Redux/actions/user-action';
 const useStyles = makeStyles(theme => ({
    paper: {
@@ -43,30 +43,31 @@ const useStyles = makeStyles(theme => ({
    }
 }));
 
-const initialValue = { categories: '' };
+const initialValue = { name: '', image: '' };
 
 export default function ManageCategories() {
    const classes = useStyles();
    const dispatch = useDispatch();
    const history = useHistory();
    const s = useSelector(s => s.category);
-
    const { loading, error, cat } = s;
-
-   const { state } = useLocation();
-   const updated = state ? state.updated : null;
+   const ds = useSelector(s => s.deleteCat);
+   const { deleted } = ds;
 
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
    const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
-   const [query, setQuery] = useState('');
 
-   const { inputState, setInputState, onChangeHandler } = useInput(
-      initialValue
-   );
+   const [query, setQuery] = useState('');
+   const onChangeQuery = ({ target: { value } }) => {
+      setQuery(value);
+   };
+
+   const { inputState, onChangeHandler } = useInput(initialValue);
 
    useEffect(() => {
       dispatch(getCategories());
    }, []);
+
    useEffect(() => {
       if (loading) setopenLoader(true);
       else setopenLoader(false);
@@ -74,31 +75,27 @@ export default function ManageCategories() {
       if (error) {
          setopenSnackBar(true);
       }
-      if (updated) {
-         setopenSnackBar(true);
+      if (deleted) {
+         console.log('deleted');
       }
-   }, [loading, updated, error]);
-   const onChangeQuery = ({ target: { value } }) => {
-      setQuery(value);
-   };
+   }, [loading, error, deleted]);
+
    const handleDelete = id => {
-      // setDummy(dumy.filter((el, i) => index != i));
-      console.log(id);
+      dispatch(deleteCat(id));
    };
 
    const handleEdit = (id, name, image) => {
-      // console.log(name);
       history.push({
          pathname: `/admin/categories/${id}`,
          state: { nameInputValue: name, imageInputValue: image }
       });
-      // openEditPopup();
    };
+
    const submitHandler = async e => {
       e.preventDefault();
-      console.log(inputState.categories);
-      dispatch(createCategory(inputState.categories));
+      dispatch(createCategory(inputState.name, inputState.image));
    };
+
    return (
       <div>
          <Layout
@@ -113,20 +110,27 @@ export default function ManageCategories() {
                   justify='center'
                   alignItems='center'
                   spacing={2}>
-                  <Grid item md={12} xs={12}>
-                     <form
-                        className={classes.form}
-                        noValidate
-                        onSubmit={submitHandler}>
+                  <form
+                     className={classes.form}
+                     noValidate
+                     onSubmit={submitHandler}>
+                     <Grid item md={12} xs={12}>
                         <Input
-                           label='Add New Categories'
-                           name='categories'
-                           placeholder='Add New Categories'
-                           value={inputState.categories}
+                           label='Category Name'
+                           name='name'
+                           value={inputState.name}
                            onChange={onChangeHandler}
                         />
-                     </form>
-                  </Grid>
+                     </Grid>
+                     <Grid item md={12} xs={12}>
+                        <Input
+                           label='Category Image Url'
+                           name='image'
+                           value={inputState.image}
+                           onChange={onChangeHandler}
+                        />
+                     </Grid>
+                  </form>
                   <Grid item md={12} xs={12}>
                      <Button
                         type='submit'
@@ -188,12 +192,6 @@ export default function ManageCategories() {
                open={s.error ? openSnackBar : null}
                handleClose={handleSnackBarClose}
                msg={s.error ? s.error : 'Error Connecting'}
-            />
-            <Snackbar
-               severity='success'
-               open={updated ? openSnackBar : null}
-               handleClose={handleSnackBarClose}
-               msg={`${updated} Updated`}
             />
             <Loader open={openLoader} handleClose={handleLoaderClose} />
          </Layout>
