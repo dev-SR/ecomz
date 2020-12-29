@@ -76,7 +76,10 @@ export default function ManageCategories() {
          setopenSnackBar(true);
       }
       if (deleted) {
-         console.log('deleted');
+         setopenSnackBar(true);
+         setTimeout(() => {
+            dispatch(getCategories());
+         }, 1000);
       }
    }, [loading, error, deleted]);
 
@@ -192,6 +195,12 @@ export default function ManageCategories() {
                open={s.error ? openSnackBar : null}
                handleClose={handleSnackBarClose}
                msg={s.error ? s.error : 'Error Connecting'}
+            />
+            <Snackbar
+               severity='success'
+               open={deleted ? openSnackBar : null}
+               handleClose={handleSnackBarClose}
+               msg={`Deleted`}
             />
             <Loader open={openLoader} handleClose={handleLoaderClose} />
          </Layout>

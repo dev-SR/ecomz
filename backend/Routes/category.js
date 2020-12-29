@@ -16,10 +16,13 @@ const {
 router
    .route('/parent')
    .get(protect, admin, getAllCategory)
-   .post(protect, admin, createCategory)
+   .post(protect, admin, createCategory);
+
+router
+   .route('/parent/:id')
+   .put(protect, admin, updateCategory)
    .delete( protect, admin, deleteCategory );
-    
-router.route('/parent/:id').put(protect, admin, updateCategory);
+   
 router.route('/sub').get(protect, admin, getAllSubCategory);
 router.route('/sub/:parentId').post(protect, admin, createSubCategory);
 

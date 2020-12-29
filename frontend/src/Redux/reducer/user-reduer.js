@@ -16,7 +16,7 @@ import {
    CAT_DELETE_FAIL,
    CAT_DELETE_REQUEST,
    CAT_DELETE_RESET,
-   CAT_DELETE_SUCCESS,
+   CAT_DELETE_SUCCESS
 } from '../actions/user-action';
 
 export const userReducer = (state = {}, action) => {
@@ -58,7 +58,7 @@ export const categoryUpdateReducer = (state = {}, action) => {
       case CAT_UPDATE_REQUEST:
          return { loading: true };
       case CAT_UPDATE_SUCCESS:
-         return { loading: false, updated: true };
+         return { loading: false, ...action.payload };
       case CAT_UPDATE_FAIL:
          return { loading: false, ...action.payload };
       case CAT_UPDATE_RESET:
@@ -72,7 +72,7 @@ export const categoryDeleteReducer = (state = {}, action) => {
       case CAT_DELETE_REQUEST:
          return { loading: true };
       case CAT_DELETE_SUCCESS:
-         return { loading: false, deleted: true };
+         return { loading: false, ...action.payload };
       case CAT_DELETE_FAIL:
          return { loading: false, ...action.payload };
       case CAT_DELETE_RESET:

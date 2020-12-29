@@ -49,13 +49,12 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
    // console.log(id + editCat + editImage);
    try {
       const r = await CategoryRepo.updateCategories(id, editCat, editImage);
-      res.json({ success: true, cat: r });
+      res.json({ updated: true, cat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllCategories();
       return res.json({
-         success: true,
-         cat: r,
-         error: 'Update Failed'
+         success: false,
+         updateError: 'Update Failed , Category May Already Exits'
       });
    }
 });
@@ -66,17 +65,21 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
  @access     Private Admin
  */
 exports.deleteCategory = asyncHandler(async (req, res, next) => {
-   const { deleteId } = req.body;
-   // console.log(id + editCat + editImage);
+   // const deleteId = req.body;
+   const { id } = req.params;
+
+   // console.log(deleteId);
+   // console.log(id);
+
    try {
-      const r = await CategoryRepo.deleteCategory(deleteId);
-      res.json({ success: true, cat: r });
+      const r = await CategoryRepo.deleteCategory(id);
+      res.json({ deleted: true, cat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllCategories();
       return res.json({
          success: true,
          cat: r,
-         error: 'Update Failed'
+         deleteError: 'Delete Failed'
       });
    }
 });

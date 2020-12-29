@@ -40,7 +40,7 @@ export default function UpdateCategory() {
    } = useLocation();
    const { id } = useParams();
    const us = useSelector(s => s.updateCat);
-   const { updated, loading, error } = us;
+   const { updated, loading, updateError } = us;
 
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
    const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
@@ -60,7 +60,8 @@ export default function UpdateCategory() {
       if (loading) setopenLoader(true);
       else setopenLoader(false);
 
-      if (error) {
+      if (updateError) {
+         console.log(updateError);
          setopenSnackBar(true);
       }
       if (updated) {
@@ -69,7 +70,7 @@ export default function UpdateCategory() {
             history.push(`/admin/categories`);
          }, 1000);
       }
-   }, [updated, error, loading]);
+   }, [updated, updateError, loading]);
 
    const submitHandler = async e => {
       e.preventDefault();
@@ -123,9 +124,9 @@ export default function UpdateCategory() {
             </Paper>
             <Snackbar
                severity='error'
-               open={error ? openSnackBar : null}
+               open={updateError ? openSnackBar : null}
                handleClose={handleSnackBarClose}
-               msg={error ? error : 'Error Updating'}
+               msg={updateError ? updateError : 'Error Updating'}
             />
             <Snackbar
                severity='success'

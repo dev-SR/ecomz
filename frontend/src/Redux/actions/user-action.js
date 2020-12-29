@@ -262,7 +262,7 @@ export const updateCat = (id, editCat, editImage) => async (
    }
 };
 
-export const deleteCat = id => async (dispatch, getState) => {
+export const deleteCat = deleteId => async (dispatch, getState) => {
    try {
       //clear previous states
       dispatch({
@@ -285,8 +285,7 @@ export const deleteCat = id => async (dispatch, getState) => {
       };
 
       const { data } = await axios.delete(
-         `/api/v1/category/parent`,
-         { deleteId: id },
+         `/api/v1/category/parent/${deleteId}`,
          config
       );
 
