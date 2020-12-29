@@ -51,17 +51,17 @@ exports.updateCategory = asyncHandler(async (req, res, next) => {
       const r = await CategoryRepo.updateCategories(id, editCat, editImage);
       res.json({ updated: true, cat: r });
    } catch (err) {
-      const r = await CategoryRepo.getAllCategories();
+      // const r = await CategoryRepo.getAllCategories();
       return res.json({
          success: false,
-         updateError: 'Update Failed , Category May Already Exits'
+         updateError: `Category ${editCat} May Already Exit`
       });
    }
 });
 
 /**
  @desc       Update Categories
- @route      PUT: {{URL}}/api/v1/category/parent
+ @route      DELETE: {{URL}}/api/v1/category/parent
  @access     Private Admin
  */
 exports.deleteCategory = asyncHandler(async (req, res, next) => {
@@ -86,7 +86,7 @@ exports.deleteCategory = asyncHandler(async (req, res, next) => {
 
 /**
  @desc       Get all Sub Categories
- @route      GET: {{URL}}/api/v1/category/parent
+ @route      GET: {{URL}}/api/v1/category/sub
  @access     Private Admin
  */
 exports.getAllSubCategory = asyncHandler(async (req, res, next) => {
@@ -95,23 +95,61 @@ exports.getAllSubCategory = asyncHandler(async (req, res, next) => {
 });
 
 /**
- @desc       Create new Categories
- @route      POST: {{URL}}/api/v1/category/parent
+ @desc       Create new sub Categories
+ @route      POST: {{URL}}/api/v1/category/sub/
  @access     Private Admin
  */
 exports.createSubCategory = asyncHandler(async (req, res, next) => {
-   const { parentId } = req.params;
-   console.log(parentId);
-   const { newSubCat } = req.body;
+   const { parentId, newSubCat } = req.body;
    try {
       const r = await CategoryRepo.createSubCategories(newSubCat, parentId);
       res.json({ success: true, subcat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllSubCategories();
       return res.json({
-         success: true,
          cat: r,
-         error: 'Sub Categories Already Exists'
+         error: 'Sub Category May Already Exits'
+      });
+   }
+});
+
+/**
+ @desc       Update Sub Categories
+ @route      PUT: {{URL}}/api/v1/category/sub/:subid
+ @access     Private Admin
+ */
+exports.updateSubCategory = asyncHandler(async (req, res, next) => {
+   const { subid } = req.params;
+   const { editSubCat } = req.body;
+   try {
+      const r = await CategoryRepo.updateSubCategories(subid, editSubCat);
+      res.json({ updated: true, cat: r });
+   } catch (err) {
+      // const r = await CategoryRepo.getAllSubCategories();
+      return res.json({
+         success: false,
+         updateError: `Error Updating,Please Try Again`
+      });
+   }
+});
+
+/**
+ @desc       delete Sub Categories
+ @route      DELETE: {{URL}}/api/v1/category/sub/:subid
+ @access     Private Admin
+ */
+exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
+   // const deleteId = req.body;
+   const { subid } = req.params;
+
+   try {
+      const r = await CategoryRepo.deleteSubCategory(subid);
+      res.json({ deleted: true, cat: r });
+   } catch (err) {
+      const r = await CategoryRepo.getAllSubCategories();
+      return res.json({
+         cat: r,
+         deleteError: 'Delete Failed'
       });
    }
 });

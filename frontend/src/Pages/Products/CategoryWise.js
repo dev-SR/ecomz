@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -7,6 +7,8 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Container, Item } from '../../Components/Abstraction/Grid';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCategories } from '../../Redux/actions/user-action';
 
 const useStyles = makeStyles(theme => ({
    cardRoot: {
@@ -60,13 +62,22 @@ const datas = [
 
 export default function CategoryWise({ data = null }) {
    const classes = useStyles();
+   const dispatch = useDispatch();
+   const s = useSelector(s => s.category);
+   const { cat } = s;
+   useEffect(() => {
+      if (!cat) {
+         dispatch(getCategories());
+      }
+   }, []);
+
    const onclick = () => {
       console.log('object');
    };
    return (
       <Container spacing={2}>
-         {datas &&
-            datas.map(item => (
+         {cat &&
+            cat.map(item => (
                <Item xs={6} sm={6} md={4}>
                   <Card classes={{ root: classes.cardRoot }}>
                      <div className={classes.heading}>
@@ -74,13 +85,13 @@ export default function CategoryWise({ data = null }) {
                            type='headline'
                            component='h2'
                            classes={{ root: classes.title }}>
-                           {item.heading}
+                           {item.cat_name}
                         </Typography>
                      </div>
                      <CardActionArea>
                         <CardMedia
                            className={classes.media}
-                           image={item.img}
+                           image={item.image}
                            title={item.imgTtitle}
                         />
                      </CardActionArea>

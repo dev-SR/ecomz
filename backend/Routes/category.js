@@ -10,7 +10,9 @@ const {
    updateCategory,
    deleteCategory,
    getAllSubCategory,
-   createSubCategory
+   createSubCategory,
+   updateSubCategory,
+   deleteSubCategory
 } = require('../Controllers/category');
 
 router
@@ -21,9 +23,15 @@ router
 router
    .route('/parent/:id')
    .put(protect, admin, updateCategory)
-   .delete( protect, admin, deleteCategory );
-   
-router.route('/sub').get(protect, admin, getAllSubCategory);
-router.route('/sub/:parentId').post(protect, admin, createSubCategory);
+   .delete(protect, admin, deleteCategory);
 
+router
+   .route('/sub')
+   .get(protect, admin, getAllSubCategory)
+   .post(protect, admin, createSubCategory);
+
+router
+   .route('/sub/:subid')
+   .put(protect, admin, updateSubCategory)
+   .delete(protect, admin, deleteSubCategory);
 module.exports = router;
