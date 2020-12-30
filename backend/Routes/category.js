@@ -17,7 +17,7 @@ const {
 
 router
    .route('/parent')
-   .get(protect, admin, getAllCategory)
+   .get(getAllCategory)
    .post(protect, admin, createCategory);
 
 router
@@ -27,7 +27,7 @@ router
 
 router
    .route('/sub')
-   .get(protect, admin, getAllSubCategory)
+   .get(getAllSubCategory)
    .post(protect, admin, createSubCategory);
 
 router

@@ -1,0 +1,368 @@
+<html>
+<head>
+<title>console.sql</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #0033b3;}
+.s1 { color: #080808;}
+.s2 { color: #1750eb;}
+.s3 { color: #067d17;}
+.s4 { color: #8c8c8c; font-style: italic;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+console.sql</font>
+</center></td></tr></table>
+<pre><span class="s0">create database </span><span class="s1">ecommerce;</span>
+<span class="s0">CREATE EXTENSION IF NOT EXISTS </span><span class="s1">&quot;uuid-ossp&quot;;</span>
+<span class="s0">SELECT </span><span class="s1">uuid_generate_v4();</span>
+
+
+<span class="s0">CREATE TABLE </span><span class="s1">users</span>
+<span class="s1">(</span>
+    <span class="s1">uid       UUID        </span><span class="s0">DEFAULT </span><span class="s1">uuid_generate_v4() </span><span class="s0">PRIMARY KEY</span><span class="s1">,</span>
+    <span class="s1">firstname </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">50</span><span class="s1">)        </span><span class="s0">NOT NULL</span><span class="s1">,</span>
+    <span class="s1">lastname  </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">50</span><span class="s1">)        </span><span class="s0">NOT NULL</span><span class="s1">,</span>
+    <span class="s1">email     </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">50</span><span class="s1">) </span><span class="s0">UNIQUE NOT NULL</span><span class="s1">,</span>
+    <span class="s0">password  VARCHAR</span><span class="s1">(</span><span class="s2">100</span><span class="s1">)       </span><span class="s0">NOT NULL</span><span class="s1">,</span>
+    <span class="s0">role      VARCHAR</span><span class="s1">(</span><span class="s2">10</span><span class="s1">) </span><span class="s0">DEFAULT </span><span class="s3">'user'</span>
+<span class="s1">);</span>
+
+
+<span class="s4">--USERS</span>
+<span class="s0">CREATE OR REPLACE FUNCTION </span><span class="s1">create_new_user(first_n </span><span class="s0">varchar</span><span class="s1">, last_n </span><span class="s0">varchar</span><span class="s1">, email </span><span class="s0">varchar</span><span class="s1">, pass </span><span class="s0">varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS TABLE</span>
+            <span class="s1">(</span>
+                <span class="s1">uid       uuid,</span>
+                <span class="s1">firstname </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">lastname  </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">email     </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s0">role      varchar</span>
+            <span class="s1">)</span>
+    <span class="s0">LANGUAGE SQL</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">INSERT INTO </span><span class="s1">users(firstname, lastname, email, </span><span class="s0">password</span><span class="s1">)</span>
+<span class="s0">VALUES </span><span class="s1">(first_n, last_n, email, pass)</span>
+<span class="s0">RETURNING </span><span class="s1">uid,firstname,lastname,email,</span><span class="s0">role </span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">create_new_user(</span><span class="s3">'test'</span><span class="s1">, </span><span class="s3">'tester'</span><span class="s1">, </span><span class="s3">'ca@gmail.com'</span><span class="s1">, </span><span class="s3">'test123'</span><span class="s1">);</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">users;</span>
+<span class="s0">UPDATE </span><span class="s1">users</span>
+<span class="s0">SET role</span><span class="s1">=</span><span class="s3">'admin'</span>
+<span class="s0">WHERE </span><span class="s1">email = </span><span class="s3">'admin@gmail.com'</span><span class="s1">;</span>
+<span class="s0">DELETE</span>
+<span class="s0">FROM </span><span class="s1">users</span>
+<span class="s0">WHERE </span><span class="s1">firstname = </span><span class="s3">'test'</span><span class="s1">;</span>
+<span class="s0">TRUNCATE </span><span class="s1">users;</span>
+
+<span class="s4">--GET user Details</span>
+<span class="s0">CREATE OR REPLACE FUNCTION </span><span class="s1">get_user_info(e_mail </span><span class="s0">varchar</span><span class="s1">, id uuid </span><span class="s0">DEFAULT </span><span class="s3">'58be776a-9ca5-4a0c-9dc6-8be5b465221c'</span><span class="s1">,</span>
+                                         <span class="s1">flag </span><span class="s0">varchar default </span><span class="s3">'by_email'</span><span class="s1">)</span>
+    <span class="s0">RETURNS TABLE</span>
+            <span class="s1">(</span>
+                <span class="s1">uid       uuid,</span>
+                <span class="s1">firstname </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">lastname  </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">email     </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s0">password  varchar</span><span class="s1">,</span>
+                <span class="s0">role      varchar</span>
+            <span class="s1">)</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">if </span><span class="s1">flag = </span><span class="s3">'by_email' </span><span class="s0">then</span>
+        <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                     <span class="s0">FROM </span><span class="s1">users u</span>
+                     <span class="s0">WHERE </span><span class="s1">u.email = e_mail;</span>
+    <span class="s0">else</span>
+        <span class="s0">if</span>
+            <span class="s1">flag = </span><span class="s3">'by_id' </span><span class="s0">then</span>
+            <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                         <span class="s0">FROM </span><span class="s1">users u</span>
+                         <span class="s0">WHERE </span><span class="s1">u.uid = id;</span>
+        <span class="s0">end if</span><span class="s1">;</span>
+    <span class="s0">end if</span><span class="s1">;</span>
+<span class="s0">END</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">select </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">get_user_info(</span><span class="s3">'test1@gmail.com'</span><span class="s1">);</span>
+<span class="s0">select </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">get_user_info(</span><span class="s3">''</span><span class="s1">, </span><span class="s3">'58be776a-9ca5-4a0c-9dc6-8be5b465221c'</span><span class="s1">, </span><span class="s3">'by_id'</span><span class="s1">);</span>
+
+<span class="s0">SELECT </span><span class="s1">uid, email, </span><span class="s0">password</span><span class="s1">, firstname, lastname, </span><span class="s0">role</span>
+<span class="s0">FROM </span><span class="s1">users</span>
+<span class="s0">WHERE </span><span class="s1">email = </span><span class="s3">''</span><span class="s1">;</span>
+
+<span class="s4">-- CATEGORIES AND SUB CATEGORIES --</span>
+
+<span class="s0">CREATE TABLE </span><span class="s1">categories</span>
+<span class="s1">(</span>
+    <span class="s1">cat_id         UUID </span><span class="s0">DEFAULT </span><span class="s1">uuid_generate_v4() </span><span class="s0">PRIMARY KEY</span><span class="s1">,</span>
+    <span class="s1">cat_name       </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">100</span><span class="s1">) </span><span class="s0">UNIQUE NOT NULL</span><span class="s1">,</span>
+    <span class="s1">them_image_url </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">225</span><span class="s1">)</span>
+<span class="s1">);</span>
+
+<span class="s4">-- Find Category</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">findCategory(</span><span class="s0">name varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS </span><span class="s1">bool</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">DECLARE</span>
+    <span class="s1">f </span><span class="s0">varchar</span><span class="s1">;</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">SELECT </span><span class="s1">cat_name</span>
+    <span class="s0">INTO </span><span class="s1">f</span>
+    <span class="s0">FROM </span><span class="s1">categories</span>
+    <span class="s0">WHERE </span><span class="s1">cat_name </span><span class="s0">ilike name</span><span class="s1">;</span>
+    <span class="s0">if </span><span class="s1">FOUND</span>
+    <span class="s0">then</span>
+        <span class="s0">RETURN true</span><span class="s1">;</span>
+    <span class="s0">else</span>
+        <span class="s0">RETURN false</span><span class="s1">;</span>
+    <span class="s0">end if</span><span class="s1">;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">select </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">findCategory(</span><span class="s3">'game'</span><span class="s1">);</span>
+
+<span class="s4">-- create new categories and return all categories</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">create_categories(</span><span class="s0">name varchar</span><span class="s1">, img </span><span class="s0">varchar default </span><span class="s3">''</span><span class="s1">)</span>
+    <span class="s0">RETURNS TABLE</span>
+            <span class="s1">(</span>
+                <span class="s1">cat_id   uuid,</span>
+                <span class="s1">cat_name </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">image    </span><span class="s0">varchar</span>
+            <span class="s1">)</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">INSERT INTO </span><span class="s1">categories(cat_name, them_image_url) </span><span class="s0">VALUES </span><span class="s1">(</span><span class="s0">name</span><span class="s1">, img);</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">categories </span><span class="s0">c</span><span class="s1">;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">create_categories(</span><span class="s3">'Computers x'</span><span class="s1">, </span><span class="s3">'njknkj'</span><span class="s1">);</span>
+
+
+<span class="s4">--- get all categories</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">categories;</span>
+<span class="s4">-- or</span>
+<span class="s0">CREATE FUNCTION </span><span class="s1">get_categories()</span>
+    <span class="s0">RETURNS TABLE</span>
+            <span class="s1">(</span>
+                <span class="s1">cat_id   uuid,</span>
+                <span class="s1">cat_name </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">image    </span><span class="s0">varchar</span>
+            <span class="s1">)</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">categories </span><span class="s0">c</span><span class="s1">;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">get_categories();</span>
+
+<span class="s4">-- UPDATE CATEGORIES</span>
+
+<span class="s4">-- UPDATE CATEGORY name OR image and Returns Updated Categories</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">update_categories(tobe_update_id uuid, newname </span><span class="s0">varchar</span><span class="s1">, newimage </span><span class="s0">varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">UPDATE </span><span class="s1">categories</span>
+    <span class="s0">SET </span><span class="s1">cat_name=newname,</span>
+        <span class="s1">them_image_url=newimage</span>
+    <span class="s0">WHERE </span><span class="s1">cat_id = tobe_update_id;</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">update_categories(</span><span class="s3">'da7ee7ed-b5bf-4182-9f7b-1ccf4862d30e'</span><span class="s1">, </span><span class="s3">'Holiday deals'</span><span class="s1">, </span><span class="s3">'Holiday deals'</span><span class="s1">);</span>
+
+<span class="s4">-- DELETE CATEGORIES</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">detete_from_Categories(id uuid)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">DELETE</span>
+    <span class="s0">FROM </span><span class="s1">categories</span>
+    <span class="s0">WHERE </span><span class="s1">cat_id = id;</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">* </span><span class="s0">FROM </span><span class="s1">categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">detete_from_Categories(</span><span class="s3">'51392dad-e596-48b9-8722-78ba79de8ca8'</span><span class="s1">);</span>
+
+<span class="s4">-- SUB CATEGORY</span>
+<span class="s0">CREATE TABLE </span><span class="s1">sub_categories</span>
+<span class="s1">(</span>
+    <span class="s1">sub_cat_id    UUID </span><span class="s0">DEFAULT </span><span class="s1">uuid_generate_v4() </span><span class="s0">PRIMARY KEY</span><span class="s1">,</span>
+    <span class="s1">sub_cat_name  </span><span class="s0">VARCHAR</span><span class="s1">(</span><span class="s2">100</span><span class="s1">) </span><span class="s0">NOT NULL</span><span class="s1">,</span>
+    <span class="s1">parent_cat_id UUID </span><span class="s0">NOT NULL REFERENCES </span><span class="s1">categories (cat_id) </span><span class="s0">ON DELETE CASCADE ON UPDATE CASCADE</span><span class="s1">,</span>
+    <span class="s0">UNIQUE </span><span class="s1">(sub_cat_name, parent_cat_id)</span>
+<span class="s1">);</span>
+<span class="s4">--- get all sub categories</span>
+
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">sub_categories;</span>
+<span class="s0">CREATE FUNCTION </span><span class="s1">get_sub_categories()</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">sub_categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">sub_categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">get_sub_categories();</span>
+
+
+<span class="s4">-- create new sub categories with parent categories name and return all sub categories</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">create_sub_categories_with_parent_name(parent </span><span class="s0">varchar</span><span class="s1">, sub </span><span class="s0">varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">sub_categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">DECLARE</span>
+    <span class="s1">p_id uuid;</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">SELECT </span><span class="s1">cat_id</span>
+    <span class="s0">INTO </span><span class="s1">p_id</span>
+    <span class="s0">FROM </span><span class="s1">categories</span>
+    <span class="s0">WHERE </span><span class="s1">cat_name = parent;</span>
+    <span class="s0">IF NOT </span><span class="s1">found </span><span class="s0">then</span>
+        <span class="s0">RETURN </span><span class="s1">;</span>
+    <span class="s0">end if</span><span class="s1">;</span>
+    <span class="s0">INSERT INTO </span><span class="s1">sub_categories(sub_cat_name, parent_cat_id) </span><span class="s0">VALUES </span><span class="s1">(sub, p_id);</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">sub_categories sc;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">create_sub_categories_with_parent_name(</span><span class="s3">'Holiday deals'</span><span class="s1">, </span><span class="s3">'Monitor'</span><span class="s1">);</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">categories;</span>
+
+<span class="s4">-- create new sub categories with parent categories id and return all sub categories</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">create_sub_categories_with_parent_id(p_id uuid, sub </span><span class="s0">varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">sub_categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">INSERT INTO </span><span class="s1">sub_categories(sub_cat_name, parent_cat_id) </span><span class="s0">VALUES </span><span class="s1">(sub, p_id);</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">sub_categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">create_sub_categories_with_parent_id(</span><span class="s3">'bbebbde0-ed0d-4bc5-b0ef-7891e6883035'</span><span class="s1">, </span><span class="s3">'Monitor'</span><span class="s1">);</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">categories;</span>
+
+
+<span class="s4">-- DELETE SUB CATEGORIES</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">detete_from_SubCategories(id uuid)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">sub_categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">DELETE</span>
+    <span class="s0">FROM </span><span class="s1">sub_categories</span>
+    <span class="s0">WHERE </span><span class="s1">sub_cat_id = id;</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">* </span><span class="s0">FROM </span><span class="s1">sub_categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">detete_from_SubCategories(</span><span class="s3">'40fbeaa8-5ed0-4d3d-b35d-b45e6e999f19'</span><span class="s1">);</span>
+<span class="s0">select </span><span class="s1">*</span>
+<span class="s0">from </span><span class="s1">categories;</span>
+
+
+<span class="s4">-- UPDATE SUB CATEGORY</span>
+
+<span class="s0">CREATE FUNCTION </span><span class="s1">update_sub_categories(tobe_update_id uuid, </span><span class="s0">new varchar</span><span class="s1">)</span>
+    <span class="s0">RETURNS SETOF </span><span class="s1">sub_categories</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">UPDATE </span><span class="s1">sub_categories sc</span>
+    <span class="s0">SET </span><span class="s1">sub_cat_name = </span><span class="s0">new</span>
+    <span class="s0">WHERE </span><span class="s1">sc.sub_cat_id = tobe_update_id;</span>
+    <span class="s0">RETURN QUERY SELECT </span><span class="s1">*</span>
+                 <span class="s0">FROM </span><span class="s1">sub_categories;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">update_sub_categories(</span><span class="s3">'62612e24-72ad-4485-9cb3-4234be20914c'</span><span class="s1">, </span><span class="s3">'Monitors'</span><span class="s1">);</span>
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">get_sub_categories();</span>
+
+
+
+<span class="s4">-- get_categories_with_their_sub_cat</span>
+<span class="s0">CREATE FUNCTION </span><span class="s1">get_categories_with_their_sub_cat(flag </span><span class="s0">varchar default </span><span class="s3">'all'</span><span class="s1">)</span>
+    <span class="s0">RETURNS TABLE</span>
+            <span class="s1">(</span>
+                <span class="s1">p_id   uuid,</span>
+                <span class="s1">parent </span><span class="s0">varchar</span><span class="s1">,</span>
+                <span class="s1">sub_id uuid,</span>
+                <span class="s1">sub    </span><span class="s0">varchar</span>
+            <span class="s1">)</span>
+    <span class="s0">LANGUAGE </span><span class="s1">plpgsql</span>
+<span class="s0">AS</span>
+<span class="s3">$$</span>
+<span class="s0">BEGIN</span>
+    <span class="s0">if </span><span class="s1">flag = </span><span class="s3">'only_parent_having_sub' </span><span class="s0">then</span>
+        <span class="s0">RETURN QUERY SELECT </span><span class="s1">p.cat_id, cat_name, sc.sub_cat_id, sub_cat_name</span>
+                     <span class="s0">FROM </span><span class="s1">categories p</span>
+                              <span class="s0">JOIN </span><span class="s1">sub_categories sc </span><span class="s0">on </span><span class="s1">p.cat_id = sc.parent_cat_id;</span>
+    <span class="s0">else</span>
+        <span class="s0">RETURN QUERY SELECT </span><span class="s1">p.cat_id, cat_name, sc.sub_cat_id, sub_cat_name</span>
+                     <span class="s0">FROM </span><span class="s1">categories p</span>
+                              <span class="s0">LEFT JOIN </span><span class="s1">sub_categories sc </span><span class="s0">on </span><span class="s1">p.cat_id = sc.parent_cat_id;</span>
+    <span class="s0">end if</span><span class="s1">;</span>
+<span class="s0">end</span><span class="s1">;</span>
+<span class="s3">$$</span><span class="s1">;</span>
+
+<span class="s0">SELECT </span><span class="s1">*</span>
+<span class="s0">FROM </span><span class="s1">get_categories_with_their_sub_cat(</span><span class="s3">'only_parent_having_sub'</span><span class="s1">);</span>
+
+
+
+</pre>
+</body>
+</html>

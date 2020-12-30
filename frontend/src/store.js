@@ -5,14 +5,20 @@ import {
    userReducer,
    categoryReducer,
    categoryUpdateReducer,
-   categoryDeleteReducer
+   categoryDeleteReducer,
+   subcategoryReducer,
+   subcategoryUpdateReducer,
+   subcategoryDeleteReducer
 } from './Redux/reducer/user-reduer';
 
 const reducers = combineReducers({
    user: userReducer,
    category: categoryReducer,
    updateCat: categoryUpdateReducer,
-   deleteCat: categoryDeleteReducer
+   deleteCat: categoryDeleteReducer,
+   subcategory: subcategoryReducer,
+   updateSubCat: subcategoryUpdateReducer,
+   deleteSubCat: subcategoryDeleteReducer
 });
 
 const initialState = {

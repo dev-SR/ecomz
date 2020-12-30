@@ -57,12 +57,12 @@ class CategoryRepo {
    }
 
    //Create New Categories
-   static async createSubCategories(newCat, p_id) {
+   static async createSubCategories(p_name, newCat) {
       const {
          rows
       } = await db.query(
-         'SELECT * FROM create_sub_categories_with_parent_id($1,$2);',
-         [p_id, newCat]
+         'SELECT * FROM create_sub_categories_with_parent_name($1,$2);',
+         [p_name, newCat]
       );
       // console.log(rows);
       return rows;

@@ -17,6 +17,7 @@ import ManageProducts from './Pages/Products/ManageProducts';
 import ManageCategories from './Pages/Categories/ManageCategories';
 import ManageSubCategories from './Pages/Categories/ManageSubCategories';
 import UpdateCategory from './Pages/Categories/UpdateCategory';
+import UpdateSubCategory from './Pages/Categories/UpdateSubCat';
 
 function App() {
    const [theme] = useToggleTheme();
@@ -51,6 +52,11 @@ function App() {
                   exact
                   path='/admin/subcategories'
                   component={ManageSubCategories}
+               />
+               <AdminRoute
+                  exact
+                  path='/admin/subcategories/:id'
+                  component={UpdateSubCategory}
                />
                <Route component={NotFound} />
             </Switch>

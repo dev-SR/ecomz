@@ -100,15 +100,36 @@ exports.getAllSubCategory = asyncHandler(async (req, res, next) => {
  @access     Private Admin
  */
 exports.createSubCategory = asyncHandler(async (req, res, next) => {
-   const { parentId, newSubCat } = req.body;
+   const { parentName, newSubCat } = req.body;
    try {
-      const r = await CategoryRepo.createSubCategories(newSubCat, parentId);
+      const r = await CategoryRepo.createSubCategories(parentName, newSubCat);
+      if (!r.length) return next(new ErrorResponse('Invalid Parent Name', 501));
       res.json({ success: true, subcat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllSubCategories();
       return res.json({
-         cat: r,
+         subcat: r,
          error: 'Sub Category May Already Exits'
+      });
+   }
+});
+/**
+ @desc       delete Sub Categories
+ @route      DELETE: {{URL}}/api/v1/category/sub/:subid
+ @access     Private Admin
+ */
+exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
+   // const deleteId = req.body;
+   const { subid } = req.params;
+
+   try {
+      const r = await CategoryRepo.deleteSubCategory(subid);
+      res.json({ deleted: true, subcat: r });
+   } catch (err) {
+      const r = await CategoryRepo.getAllSubCategories();
+      return res.json({
+         subcat: r,
+         deleteError: 'Delete Failed'
       });
    }
 });
@@ -123,33 +144,13 @@ exports.updateSubCategory = asyncHandler(async (req, res, next) => {
    const { editSubCat } = req.body;
    try {
       const r = await CategoryRepo.updateSubCategories(subid, editSubCat);
-      res.json({ updated: true, cat: r });
-   } catch (err) {
-      // const r = await CategoryRepo.getAllSubCategories();
-      return res.json({
-         success: false,
-         updateError: `Error Updating,Please Try Again`
-      });
-   }
-});
-
-/**
- @desc       delete Sub Categories
- @route      DELETE: {{URL}}/api/v1/category/sub/:subid
- @access     Private Admin
- */
-exports.deleteSubCategory = asyncHandler(async (req, res, next) => {
-   // const deleteId = req.body;
-   const { subid } = req.params;
-
-   try {
-      const r = await CategoryRepo.deleteSubCategory(subid);
-      res.json({ deleted: true, cat: r });
+      res.json({ updated: true, subcat: r });
    } catch (err) {
       const r = await CategoryRepo.getAllSubCategories();
       return res.json({
-         cat: r,
-         deleteError: 'Delete Failed'
+         subcat: r,
+         updateError: `Sub Category ${editSubCat} May Already Exit`
       });
    }
 });
+
