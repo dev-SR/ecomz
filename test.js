@@ -89,11 +89,41 @@ const people = [
    { word: 'A', example: 'ex2..' },
    { word: 'B', example: 'ex1..' }
 ];
-
+let arr = [
+   {
+      cat_id: 'bbebbde0-ed0d-4bc5-b0ef-7891e6883035',
+      cat_name: 'Electronics',
+      image:
+         'https://www.polytechnichub.com/wp-content/uploads/2017/04/Electronic.jpg'
+   },
+   {
+      cat_id: 'd03c6797-658f-4202-8d43-ca54dcf1afad',
+      cat_name: 'Computers & Accessoriess',
+      image:
+         'https://cdn.thewirecutter.com/wp-content/uploads/2020/04/laptops-lowres-2x1--1024x512.jpg'
+   },
+   {
+      cat_id: 'da7ee7ed-b5bf-4182-9f7b-1ccf4862d30e',
+      cat_name: 'Holiday deals',
+      image: 'https://www.picpedia.org/highway-signs/images/holiday.jpg'
+   },
+   {
+      cat_id: '9d4c70b4-4976-4584-a8e2-7b2fa39aed10',
+      cat_name: 'Books',
+      image:
+         'https://media.wired.com/photos/5be4cd03db23f3775e466767/master/w_2560%2Cc_limit/books-521812297.jpg'
+   },
+   {
+      cat_id: 'c615641a-762e-494d-b131-09c0d215b93e',
+      cat_name: 'Gaming Accessories',
+      image:
+         'https://images-na.ssl-images-amazon.com/images/I/71y%2BUGuJl5L._SL1500_.jpg'
+   }
+];
 function groupBy(arr, property) {
    return arr.reduce((result, currentValue) => {
       const key = currentValue[property]; //obj[property]
-      console.log(result);
+      // console.log(result);
       //   console.log(key); 21 .. 20 ..20
       // If an array already present for key,
       //    push it to the array.Else create an array and
@@ -104,7 +134,7 @@ function groupBy(arr, property) {
       result[key].push(currentValue);
       // Initial value for `result`
       // {}
-       
+
       // After first iteration
       // {
       //    A: [{ word: 'A', example: 'ex1..' }];
@@ -130,11 +160,21 @@ function groupBy(arr, property) {
       return result;
    }, {}); // empty object is the initial value for result object
 }
-const groupedPeople = groupBy(people, 'word');
-console.log(groupedPeople);
+const groupedPeople = groupBy(arr, 'cat_name');
+// console.log(groupedPeople);
 
+var getKeys = function (obj) {
+   var keys = [];
+   for (var key in obj) {
+      keys.push(key);
+   }
+   return keys;
+};
 
-const O = {
-   ab_pd: "jdfls"
-}
-console.log( O );
+console.log(getKeys(groupedPeople));
+
+console.log(
+   arr.find(item => {
+      if (item.cat_name === 'Electronics') return item.cat_id;
+   }).cat_id
+);

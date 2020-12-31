@@ -35,6 +35,10 @@ import {
 } from './../../Redux/actions/user-action';
 import AutoCompleteModule from '../../Components/Abstraction/AutoComplete';
 import { useAutoComplete } from './../../Components/Abstraction/AutoComplete';
+import {
+   convertAccordingToProperty,
+   getAutoCompleteOptions
+} from './../../Utils/modify';
 
 const useStyles = makeStyles(theme => ({
    paper: {
@@ -87,11 +91,15 @@ export default function ManageSubCategories() {
 
    useEffect(() => {
       if (cat) {
-         cat.map(item => {
-            parent.push(item.cat_name);
-         });
-         setParentcat(parent);
-         setAutoComVal(parent[0]);
+         const newObj_With_Property_AS_CATNAME = convertAccordingToProperty(
+            cat,
+            'cat_name'
+         );
+         const autoCompleteOptions = getAutoCompleteOptions(
+            newObj_With_Property_AS_CATNAME
+         );
+         setParentcat(autoCompleteOptions);
+         setAutoComVal(autoCompleteOptions[0]);
       }
    }, [cat]);
 
@@ -123,6 +131,11 @@ export default function ManageSubCategories() {
 
    const submitHandler = async e => {
       e.preventDefault();
+
+      //
+      //* const found = cat.find(item => item.cat_name === autoComVal);
+      //! const { cat_id } = found;
+      // console.log(cat_id);
       dispatch(createSubCategory(autoComVal, inputState.name));
       // console.log(autoComVal);
       // console.log(inputState.name);
