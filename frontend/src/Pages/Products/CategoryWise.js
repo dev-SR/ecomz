@@ -8,7 +8,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Container, Item } from '../../Components/Abstraction/Grid';
 import { useSelector, useDispatch } from 'react-redux';
-import { getCategories } from '../../Redux/actions/user-action';
+import { getCategories } from '../../Redux/actions/category-action';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
    cardRoot: {
@@ -64,6 +65,7 @@ export default function CategoryWise({ data = null }) {
    const classes = useStyles();
    const dispatch = useDispatch();
    const s = useSelector(s => s.category);
+   const history = useHistory();
    const { cat } = s;
    useEffect(() => {
       if (!cat) {
@@ -71,8 +73,11 @@ export default function CategoryWise({ data = null }) {
       }
    }, []);
 
-   const onclick = () => {
-      console.log('object');
+   const goToCategory = id => {
+      history.push({
+         pathname: `/admin/shop/cat/${id}`,
+         state: { category: id }
+      });
    };
    return (
       <Container spacing={2}>
@@ -88,7 +93,7 @@ export default function CategoryWise({ data = null }) {
                            {item.cat_name}
                         </Typography>
                      </div>
-                     <CardActionArea>
+                     <CardActionArea onClick={e => goToCategory(item.cat_id)}>
                         <CardMedia
                            className={classes.media}
                            image={item.image}
@@ -96,7 +101,10 @@ export default function CategoryWise({ data = null }) {
                         />
                      </CardActionArea>
                      <CardActions>
-                        <Button size='small' color='primary'>
+                        <Button
+                           size='small'
+                           color='primary'
+                           onClick={e => goToCategory(item.cat_id)}>
                            Learn More
                         </Button>
                      </CardActions>

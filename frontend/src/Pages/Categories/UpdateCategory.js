@@ -11,7 +11,7 @@ import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { updateCat } from '../../Redux/actions/user-action';
+import { updateCat } from '../../Redux/actions/category-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),

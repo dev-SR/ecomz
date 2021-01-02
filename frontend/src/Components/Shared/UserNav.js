@@ -4,6 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
 import HomeIcon from '@material-ui/icons/Home';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { Link, useLocation } from 'react-router-dom';
@@ -25,7 +27,7 @@ const userItems = [
    { name: 'ORDERS', to: '/user/orders' }
 ];
 
-export const UserNav = () => {
+export const UserNav = ({ itemcount = 1 }) => {
    const { pathname } = useLocation();
    const dispatch = useDispatch();
    const handleSignOut = () => {
@@ -46,11 +48,11 @@ export const UserNav = () => {
    };
    const classes = useStyles();
    return (
-      <Grid container justify='flex-end' alignItems='center' spacing={2}>
+      <Grid container justify='center' alignItems='center' spacing={3}>
          <Grid item xs={2} md={2}>
             {pathname === '/' ? (
                <Link to='/'>
-                  <HomeIcon fontSize='medium' style={{ fill: '#212121' }} />
+                  <HomeIcon fontSize='medium' style={{ fill: '#4a148c' }} />
                </Link>
             ) : (
                <Link to='/'>
@@ -62,16 +64,31 @@ export const UserNav = () => {
             )}
          </Grid>
          <Grid item xs={2} md={2}>
+            {pathname === '/shop/all' ? (
+               <Link to='/shop/all'>
+                  <Badge color='primary'>
+                     <ShoppingCartIcon style={{ fill: '#4a148c' }} />
+                  </Badge>
+               </Link>
+            ) : (
+               <Link to='/shop/all'>
+                  <Badge color='primary'>
+                     <ShoppingCartOutlinedIcon style={{ fill: '#212121' }} />
+                  </Badge>
+               </Link>
+            )}
+         </Grid>
+         <Grid item xs={2} md={2}>
             {pathname === '/cart' ? (
                <Link to='/cart'>
-                  <Badge badgeContent={4} color='primary'>
-                     <ShoppingCartIcon style={{ fill: '#212121' }} />
+                  <Badge badgeContent={itemcount} color='primary'>
+                     <AddShoppingCartIcon style={{ fill: '#4a148c' }} />
                   </Badge>
                </Link>
             ) : (
                <Link to='/cart'>
-                  <Badge badgeContent={4} color='primary'>
-                     <ShoppingCartOutlinedIcon style={{ fill: '#212121' }} />
+                  <Badge badgeContent={itemcount} color='primary'>
+                     <AddShoppingCartIcon style={{ fill: '#212121' }} />
                   </Badge>
                </Link>
             )}

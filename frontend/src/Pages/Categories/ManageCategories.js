@@ -16,15 +16,17 @@ import {
 import Input, { useInput } from '../../Components/Abstraction/Input';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
-import { useForm } from '../../Components/Reusable/useForm';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
 import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
-import { deleteCat, getCategories } from '../../Redux/actions/user-action';
-import { createCategory } from './../../Redux/actions/user-action';
+import {
+   deleteCat,
+   getCategories,
+   createCategory
+} from '../../Redux/actions/category-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),

@@ -1,15 +1,20 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension'; //reducers
+import { userReducer } from './Redux/reducer/user-reduer';
 import {
-   userReducer,
    categoryReducer,
    categoryUpdateReducer,
    categoryDeleteReducer,
    subcategoryReducer,
    subcategoryUpdateReducer,
    subcategoryDeleteReducer
-} from './Redux/reducer/user-reduer';
+} from './Redux/reducer/category-reducer';
+import {
+   brandsReducer,
+   brandsUpdateReducer,
+   brandsDeleteReducer
+} from './Redux/reducer/brands-reducer';
 
 const reducers = combineReducers({
    user: userReducer,
@@ -18,7 +23,10 @@ const reducers = combineReducers({
    deleteCat: categoryDeleteReducer,
    subcategory: subcategoryReducer,
    updateSubCat: subcategoryUpdateReducer,
-   deleteSubCat: subcategoryDeleteReducer
+   deleteSubCat: subcategoryDeleteReducer,
+   brands: brandsReducer,
+   updateBrands: brandsUpdateReducer,
+   deleteBrands: brandsDeleteReducer
 });
 
 const initialState = {

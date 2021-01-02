@@ -18,6 +18,9 @@ import ManageCategories from './Pages/Categories/ManageCategories';
 import ManageSubCategories from './Pages/Categories/ManageSubCategories';
 import UpdateCategory from './Pages/Categories/UpdateCategory';
 import UpdateSubCategory from './Pages/Categories/UpdateSubCat';
+import ManageBrands from './Pages/Brands/ManageBrands';
+import UpdateBrands from './Pages/Brands/UpdateBrands';
+import ManageShop from './Pages/Shops/ManageShop';
 
 function App() {
    const [theme] = useToggleTheme();
@@ -31,6 +34,7 @@ function App() {
                <Route exact path='/' component={Home} />
                <Route exact path='/signin' component={Login} />
                <Route exact path='/register' component={Register} />
+               <Route exact path='/shop/all' component={ManageShop} />
                <UserRoute exact path='/profile' component={UserProfile} />
                <AdminRoute exact path='/admin' component={AdminDashBoard} />
                <AdminRoute
@@ -55,8 +59,13 @@ function App() {
                />
                <AdminRoute
                   exact
-                  path='/admin/subcategories/:id'
-                  component={UpdateSubCategory}
+                  path='/admin/brands'
+                  component={ManageBrands}
+               />
+               <AdminRoute
+                  exact
+                  path='/admin/brands/:id'
+                  component={UpdateBrands}
                />
                <Route component={NotFound} />
             </Switch>

@@ -17,10 +17,8 @@ import CallSplitRoundedIcon from '@material-ui/icons/CallSplitRounded';
 import CategoryIcon from '@material-ui/icons/Category';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import { Link } from 'react-router-dom';
-
-
 
 const useStyles = makeStyles(theme => ({
    drawer: {
@@ -57,7 +55,8 @@ export const DrawerDataAdmin = [
       expanded: false,
       children: [
          { name: 'Categories', to: '/admin/categories' },
-         { name: 'Sub Categories', to: '/admin/subcategories' }
+         { name: 'Sub Categories', to: '/admin/subcategories' },
+         { name: 'Brands', to: '/admin/brands' }
       ]
    },
    {
@@ -65,6 +64,14 @@ export const DrawerDataAdmin = [
       Icon: CallSplitRoundedIcon,
 
       children: [{ name: 'Orders', to: '/admin/orders' }]
+   },
+   {
+      name: 'Manage Users',
+      Icon: SupervisorAccountIcon,
+      children: [
+         { name: 'User', to: '/admin/user' },
+         { name: 'Admin', to: '/admin/ad' }
+      ]
    }
 ];
 export const DrawerDataUser = [
@@ -121,20 +128,21 @@ const Drawer = ({
                               <ExpandIcon expanded={item.expanded} />
                            </ListItem>
                            <Collapse in={item.expanded}>
-                              {item.children.map(child => (
-                                 <ListItem
-                                    className={classes.subItem}
-                                    key={child.name}
-                                    component={Link}
-                                    to={child.to}
-                                    button
-                                    dense>
-                                    {/* <ListItemIcon>
+                              {item.children &&
+                                 item.children.map(child => (
+                                    <ListItem
+                                       className={classes.subItem}
+                                       key={child.name}
+                                       component={Link}
+                                       to={child.to}
+                                       button
+                                       dense>
+                                       {/* <ListItemIcon>
                                     <child.Icon />
                                  </ListItemIcon> */}
-                                    <ListItemText primary={child.name} />
-                                 </ListItem>
-                              ))}
+                                       <ListItemText primary={child.name} />
+                                    </ListItem>
+                                 ))}
                            </Collapse>
                         </div>
                      ))}

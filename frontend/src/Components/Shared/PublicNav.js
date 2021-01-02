@@ -3,6 +3,7 @@ import { Badge, Button, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import HomeIcon from '@material-ui/icons/Home';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import { Link, useLocation } from 'react-router-dom';
@@ -29,7 +30,7 @@ export const PublicNav = () => {
          <Grid item>
             {pathname === '/' ? (
                <Link to='/'>
-                  <HomeIcon fontSize='medium' style={{ fill: '#212121' }} />
+                  <HomeIcon fontSize='medium' style={{ fill: '#4a148c' }} />
                </Link>
             ) : (
                <Link to='/'>
@@ -41,16 +42,31 @@ export const PublicNav = () => {
             )}
          </Grid>
          <Grid item>
+            {pathname === '/shop/all' ? (
+               <Link to='/shop/all'>
+                  <Badge color='primary'>
+                     <ShoppingCartIcon style={{ fill: '#4a148c' }} />
+                  </Badge>
+               </Link>
+            ) : (
+               <Link to='/shop/all'>
+                  <Badge color='primary'>
+                     <ShoppingCartOutlinedIcon style={{ fill: '#212121' }} />
+                  </Badge>
+               </Link>
+            )}
+         </Grid>
+         <Grid item>
             {pathname === '/cart' ? (
                <Link to='/cart'>
                   <Badge badgeContent={4} color='primary'>
-                     <ShoppingCartIcon style={{ fill: '#212121' }} />
+                     <AddShoppingCartIcon style={{ fill: '#4a148c' }} />
                   </Badge>
                </Link>
             ) : (
                <Link to='/cart'>
                   <Badge badgeContent={4} color='primary'>
-                     <ShoppingCartOutlinedIcon style={{ fill: '#212121' }} />
+                     <AddShoppingCartIcon style={{ fill: '#212121' }} />
                   </Badge>
                </Link>
             )}

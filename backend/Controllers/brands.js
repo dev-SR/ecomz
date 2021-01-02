@@ -26,7 +26,7 @@ exports.createBrands = asyncHandler(async (req, res, next) => {
    const { newBrands } = req.body;
    try {
       const r = await BrandsRepo.createBrands(newBrands);
-      res.json({ success: true, brands: r });
+      res.json({ created: true, brands: r });
    } catch (err) {
       return next(new ErrorResponse('Brands Already Exits', 500));
    }
@@ -42,11 +42,17 @@ exports.updateBrands = asyncHandler(async (req, res, next) => {
    const { editBrands } = req.body;
    try {
       const r = await BrandsRepo.updateBrands(id, editBrands);
-      res.json({ updated: true, brands: r });
+
+      if (!r.length)
+         return next(
+            new ErrorResponse(`Brands ${editBrands} May Already Exit`, 500)
+         );
+
+      res.json({ updated: true });
    } catch (err) {
       return res.json({
          success: false,
-         updateError: `Brands ${editCat} May Already Exit`
+         updateError: `Brands ${editBrands} May Already Exit`
       });
    }
 });
@@ -61,7 +67,9 @@ exports.deleteBrands = asyncHandler(async (req, res, next) => {
    console.log(id);
    try {
       const r = await BrandsRepo.deleteBrands(id);
-      res.json({ deleted: true, brands: r });
+      if (!r.length)
+         return next(new ErrorResponse(`${editBrands} cant be deleted`, 500));
+      res.json({ deleted: true });
    } catch (err) {
       return res.json({
          success: true,

@@ -28,11 +28,11 @@ import {
    deleteCat,
    deleteSubCat,
    getSubCategories
-} from '../../Redux/actions/user-action';
+} from '../../Redux/actions/category-action';
 import {
    createCategory,
    getCategories
-} from './../../Redux/actions/user-action';
+} from './../../Redux/actions/category-action';
 import AutoCompleteModule from '../../Components/Abstraction/AutoComplete';
 import { useAutoComplete } from './../../Components/Abstraction/AutoComplete';
 import {

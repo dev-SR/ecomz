@@ -11,7 +11,7 @@ import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { updateSubCat } from '../../Redux/actions/category-action';
+import { updateBrands } from '../../Redux/actions/brands-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),
@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 const initialValue = { name: '' };
 
-export default function UpdateSubCategory() {
+export default function UpdateBrands() {
    const classes = useStyles();
    const dispatch = useDispatch();
    const history = useHistory();
@@ -39,7 +39,7 @@ export default function UpdateSubCategory() {
       state: { nameInputValue }
    } = useLocation();
    const { id } = useParams();
-   const us = useSelector(s => s.updateSubCat);
+   const us = useSelector(s => s.updateBrands);
    const { updated, loading, updateError } = us;
 
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
@@ -66,14 +66,14 @@ export default function UpdateSubCategory() {
       if (updated) {
          setopenSnackBar(true);
          setTimeout(() => {
-            history.push(`/admin/subcategories`);
+            history.push(`/admin/brands`);
          }, 1000);
       }
    }, [updated, updateError, loading]);
 
    const submitHandler = async e => {
       e.preventDefault();
-      dispatch(updateSubCat(id, inputState.name));
+      dispatch(updateBrands(id, inputState.name));
    };
    return (
       <div>
@@ -95,7 +95,7 @@ export default function UpdateSubCategory() {
                      onSubmit={submitHandler}>
                      <Grid item md={12} xs={12}>
                         <Input
-                           label='Category Name'
+                           label='Edit Brands'
                            name='name'
                            value={inputState.name}
                            onChange={onChangeHandler}
