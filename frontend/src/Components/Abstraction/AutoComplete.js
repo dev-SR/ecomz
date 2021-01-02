@@ -5,18 +5,25 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 // const options = ['Option 1', 'Option 2'];
 export const useAutoComplete = op => {
    const [autoComVal, setAutoComVal] = useState([]);
+   const [autoCominputValue, setautoComInputValue] = React.useState('');
+
    return {
       autoComVal,
-      setAutoComVal
+      setAutoComVal,
+      autoCominputValue,
+      setautoComInputValue
    };
 };
 export default function ControllableStates({
    options,
    value,
    setValue,
-   label
+   label,
+   inputValue,
+   setInputValue
 }) {
-   const [inputValue, setInputValue] = React.useState('');
+   // console.log(inputValue);
+   // console.log(value);
    return (
       <div>
          <Autocomplete

@@ -12,6 +12,7 @@ require('dotenv').config();
 //users routes
 const authRoute = require('./Routes/auth');
 const categoryRoute = require('./Routes/category');
+const brandsRoute = require('./Routes/brands');
 
 //Middleware
 app.use(cors());
@@ -25,6 +26,7 @@ if (process.env.NODE_ENV === 'development') {
 //Mount Router
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/category', categoryRoute);
+app.use('/api/v1/brands', brandsRoute);
 
 //Must be after route to catch Errors.....
 app.use(errorHandler);

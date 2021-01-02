@@ -67,8 +67,11 @@ export default function ManageSubCategories() {
    const c = useSelector(s => s.category);
    const { cat } = c;
    const [parentcat, setParentcat] = useState([]);
-   const { autoComVal, setAutoComVal } = useAutoComplete();
-
+   const {
+      autoComVal,
+      setAutoComVal,
+      setautoComInputValue
+   } = useAutoComplete();
    const s = useSelector(s => s.subcategory);
    const { loading, error, subcat } = s;
    const ds = useSelector(s => s.deleteSubCat);
@@ -161,30 +164,31 @@ export default function ManageSubCategories() {
                         options={parentcat}
                         value={autoComVal}
                         setValue={setAutoComVal}
+                        setInputValue={setautoComInputValue}
                      />
                   </Grid>
-                  <form
-                     className={classes.form}
-                     noValidate
-                     onSubmit={submitHandler}>
-                     <Grid item md={12} xs={12}>
+                  <Grid item md={12} xs={12}>
+                     <form
+                        className={classes.form}
+                        noValidate
+                        onSubmit={submitHandler}>
                         <Input
-                           label='Category Name'
+                           label='Sub Category Name'
                            name='name'
                            value={inputState.name}
                            onChange={onChangeHandler}
                         />
-                     </Grid>
-                     <Grid item md={12} xs={12}>
-                        <Button
-                           type='submit'
-                           variant='contained'
-                           color='primary'
-                           onClick={submitHandler}>
-                           Submit
-                        </Button>
-                     </Grid>
-                  </form>
+                     </form>
+                  </Grid>
+                  <Grid item md={12} xs={12}>
+                     <Button
+                        type='submit'
+                        variant='contained'
+                        color='primary'
+                        onClick={submitHandler}>
+                        Submit
+                     </Button>
+                  </Grid>
                   <Grid item md={12} xs={12}>
                      <InputBase
                         id='filter'

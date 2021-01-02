@@ -163,6 +163,38 @@ function groupBy(arr, property) {
 const groupedPeople = groupBy(arr, 'cat_name');
 // console.log(groupedPeople);
 
+//! 2nd Method
+
+// const convertArrayToObject = (array, key) => {
+//    const initialValue = {};
+//    return array.reduce((obj, item) => {
+//       return {
+//          ...obj,
+//          [item[key]]: item
+//       };
+//    }, initialValue);
+// };
+// console.log(
+//    convertArrayToObject(
+//       [
+//          { id: 111, name: 'John', age: 29 },
+//          { id: 112, name: 'Sarah', age: 25 },
+//          { id: 122, name: 'Kate', age: 22 },
+//          { id: 123, name: 'Tom', age: 21 },
+//          { id: 125, name: 'Emma', age: 24 }
+//       ],
+//       'id'
+//    )
+// );
+
+// {
+//   111:{ id: 111, name: 'John', age: 29 },
+//   112:{ id: 112, name: 'Sarah', age: 25 },
+//   122:{ id: 122, name: 'Kate', age: 22 },
+//   123:{ id: 123, name: 'Tom', age: 21 },
+//   125:{ id: 125, name: 'Emma', age: 24 }
+// }
+
 var getKeys = function (obj) {
    var keys = [];
    for (var key in obj) {
@@ -178,3 +210,36 @@ console.log(
       if (item.cat_name === 'Electronics') return item.cat_id;
    }).cat_id
 );
+
+//! The Object.fromEntries() method transforms a list of key-value pairs into an object.
+
+// const entries = new Map([
+//   ['foo', 'bar'],
+//   ['baz', 42]
+// ]);
+
+// const obj = Object.fromEntries(entries);
+
+// console.log(obj);
+// expected output: Object { foo: "bar", baz: 42 }
+
+//! The Object.entries() method returns an array of a given object's own enumerable string-keyed property [key, value] pairs
+// const a={
+//   name: 'Soikat',
+//   pass:"Soikat"
+// }
+
+// Object.entries(a).map(([key, value]) => {
+//     console.log(key);
+//     console.log(value);
+// });
+
+// console.log(Object.entries(a));
+
+// const arr= [["key1","value1"],["key2","value2"]];
+
+// const [keypay1,keypair2]=arr;
+//console.log(keypay1);
+
+//  arr.map(keypar=>
+//  console.log(keypar));
