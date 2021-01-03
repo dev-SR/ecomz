@@ -7,15 +7,7 @@ import Input, { useInput } from '../../Components/Abstraction/Input';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-   TableBody,
-   TableRow,
-   TableCell,
-   Toolbar,
-   InputAdornment
-} from '@material-ui/core';
-import { Search } from '@material-ui/icons';
-import AddIcon from '@material-ui/icons/Add';
+import { TableBody, TableRow, TableCell } from '@material-ui/core';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
@@ -32,6 +24,7 @@ import {
    getAutoCompleteOptions
 } from '../../Utils/modify';
 import useTable from '../../Components/Reusable/useTable';
+import { getProducts } from '../../Redux/actions/products-action';
 
 const useStyles = makeStyles(theme => ({
    paper: {
@@ -63,9 +56,18 @@ const initialValue = {
    Sold: 0
 };
 const headCells = [
-   { id: 'id', label: 'ID' },
-   { id: 'subcat', label: 'SUB CATEGORY' }
+   { id: 'name', label: 'name' },
+   { id: 'p_price', label: 'price' },
+   { id: 'p_sold', label: 'sold' },
+   { id: 'p_quantity', label: 'quantity' },
+   { id: 'p_brand', label: 'brand' },
+   { id: 'p_cat', label: 'cat' },
+   { id: 'p_subcat', label: 'subcat' },
+   { id: 'p_release', label: 'release' },
+   { id: 'edit', label: 'actions' }
+   // { id: 'delete', label: 'delete' }
 ];
+
 export default function ManageSubCategories() {
    const classes = useStyles();
    const dispatch = useDispatch();
@@ -81,6 +83,16 @@ export default function ManageSubCategories() {
    const [subcatOptions, setSubCatOptions] = useState([]);
    const [subcatSelected, setSubCatSelected] = useState([0]);
    const [subcatSelectionChange, setSubCatSelectionChange] = React.useState('');
+
+   const p = useSelector(s => s.products);
+   const { loading, error, total, products } = p;
+
+   useEffect(() => {
+      if (!cat) dispatch(getCategories());
+      if (!subcat) dispatch(getSubCategories());
+   }, []);
+
+   const { inputState, onChangeHandler } = useInput(initialValue);
    useEffect(() => {
       if (cat) {
          const newObj_With_Property_AS_CATNAME = convertAccordingToProperty(
@@ -119,19 +131,31 @@ export default function ManageSubCategories() {
          return items;
       }
    });
+
+   const [ProductFetch, setProductFetch] = useState([]);
+
    const {
       TblContainer,
       TblHead,
       TblPagination,
-      recordsAfterPagingAndSorting
-   } = useTable(subcat ? subcat : [], headCells, filterFn);
+      recordsAfterPagingAndSorting,
+      page,
+      rowsPerPage
+   } = useTable(
+      products ? ProductFetch : [],
+      headCells,
+      products ? total : null,
+      filterFn
+   );
+   useEffect(() => {
+      dispatch(getProducts(Number(page + 1), rowsPerPage));
+   }, [page, rowsPerPage]);
 
    useEffect(() => {
-      if (!cat) dispatch(getCategories());
-      if (!subcat) dispatch(getSubCategories());
-   }, []);
-   const { inputState, onChangeHandler } = useInput(initialValue);
-
+      setProductFetch(products);
+      console.log(ProductFetch);
+      console.log(page);
+   }, [page, dispatch, products, ProductFetch]);
    // useEffect(() => {
    //    if (loading) setopenLoader(true);
    //    else setopenLoader(false);
@@ -275,20 +299,33 @@ export default function ManageSubCategories() {
                   </Grid>
                </form>
             </Paper>
-
+            {/* "p_id":  "p_name": " "p_description": "p_image":
+            "p_price":  "p_sold": 0, "p_quantity": 1, "p_release":
+          "p_discount": "0", "p_color": "Black and
+            White", "p_brand": "Apple", "p_cat": "Computers & Accessories",
+            "p_subcat */}
             <Paper className={classes.paper}>
                <TblContainer>
                   <TblHead />
                   <TableBody>
-                     {subcat &&
-                        subcat.map((item, index) => (
+                     {ProductFetch &&
+                        ProductFetch.map((item, index) => (
                            <TableRow key={index}>
-                              <TableCell>{item.sub_cat_id}</TableCell>
-                              <TableCell>{item.sub_cat_name}</TableCell>
+                              <TableCell>{`${item.p_name.slice(
+                                 0,
+                                 25
+                              )}..`}</TableCell>
+                              <TableCell>{item.p_price}</TableCell>
+                              <TableCell>{item.p_sold}</TableCell>
+                              <TableCell>{item.p_quantity}</TableCell>
+                              <TableCell>{item.p_brand}</TableCell>{' '}
+                              <TableCell>{item.p_cat}</TableCell>{' '}
+                              <TableCell>{item.p_subcat}</TableCell>{' '}
+                              <TableCell>{item.p_release}</TableCell>
                               <TableCell>
                                  <Button
                                     color='primary'
-                                    onClick={() => handleEdit(item.sub_cat_id)}>
+                                    onClick={() => handleEdit(item.p_id)}>
                                     <EditOutlinedIcon fontSize='small' />
                                  </Button>
                                  <Button
@@ -305,7 +342,6 @@ export default function ManageSubCategories() {
                </TblContainer>
                <TblPagination />
             </Paper>
-
             {/* <Snackbar
                severity='error'
                open={s.error ? openSnackBar : null}

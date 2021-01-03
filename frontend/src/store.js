@@ -15,7 +15,11 @@ import {
    brandsUpdateReducer,
    brandsDeleteReducer
 } from './Redux/reducer/brands-reducer';
-
+import {
+   productsReducer,
+   productsUpdateReducer,
+   productsDeleteReducer
+} from './Redux/reducer/products-reducer';
 const reducers = combineReducers({
    user: userReducer,
    category: categoryReducer,
@@ -26,7 +30,10 @@ const reducers = combineReducers({
    deleteSubCat: subcategoryDeleteReducer,
    brands: brandsReducer,
    updateBrands: brandsUpdateReducer,
-   deleteBrands: brandsDeleteReducer
+   deleteBrands: brandsDeleteReducer,
+   products: productsReducer,
+   updateProducts: productsUpdateReducer,
+   deleteProducts: productsDeleteReducer
 });
 
 const initialState = {

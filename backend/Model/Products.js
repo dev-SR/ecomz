@@ -9,9 +9,14 @@ class ProductsRepo {
          page,
          limit
       ]);
+
       return rows;
    }
-
+   //Get all Products
+   static async getTotalProductsCount() {
+      const { rows } = await db.query('SELECT count(p_id) FROM products;');
+      return rows;
+   }
    //Create New Products
    static async findProducts(newCat) {
       const { rows } = await db.query('SELECT * FROM findCategory($1);', [

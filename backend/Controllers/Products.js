@@ -15,7 +15,9 @@ const asyncHandler = require('express-async-handler');
 exports.getAllProducts = asyncHandler(async (req, res, next) => {
    const { page, limit } = req.query;
    const r = await ProductsRepo.getAllProducts(page, limit);
-   res.json({ success: true, products: r });
+   const [t] = await ProductsRepo.getTotalProductsCount();
+
+   res.json({ success: true, total: Number(t.count), products: r });
 });
 
 /**
