@@ -80,7 +80,7 @@ export default function UpdateSubCategory() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Update Sub Category'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <Grid

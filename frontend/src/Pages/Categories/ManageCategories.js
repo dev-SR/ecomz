@@ -106,7 +106,7 @@ export default function ManageCategories() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Manage Categories'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <Grid

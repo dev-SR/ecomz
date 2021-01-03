@@ -59,18 +59,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const initialValue = { name: '' };
-const parent = [];
 export default function ManageSubCategories() {
    const classes = useStyles();
    const dispatch = useDispatch();
    const history = useHistory();
    const c = useSelector(s => s.category);
    const { cat } = c;
-   const [parentcat, setParentcat] = useState([]);
    const {
-      autoComVal,
-      setAutoComVal,
-      setautoComInputValue
+      options,
+      setOptions,
+      selected,
+      setSelected,
+      SelectionOnChange,
+      setSelectionOnChange
    } = useAutoComplete();
    const s = useSelector(s => s.subcategory);
    const { loading, error, subcat } = s;
@@ -101,8 +102,8 @@ export default function ManageSubCategories() {
          const autoCompleteOptions = getAutoCompleteOptions(
             newObj_With_Property_AS_CATNAME
          );
-         setParentcat(autoCompleteOptions);
-         setAutoComVal(autoCompleteOptions[0]);
+         setOptions(autoCompleteOptions);
+         setSelected(autoCompleteOptions[0]);
       }
    }, [cat]);
 
@@ -139,7 +140,7 @@ export default function ManageSubCategories() {
       //* const found = cat.find(item => item.cat_name === autoComVal);
       //! const { cat_id } = found;
       // console.log(cat_id);
-      dispatch(createSubCategory(autoComVal, inputState.name));
+      dispatch(createSubCategory(selected, inputState.name));
       // console.log(autoComVal);
       // console.log(inputState.name);
    };
@@ -149,7 +150,7 @@ export default function ManageSubCategories() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Manage Sub Categories'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <Grid
@@ -160,11 +161,13 @@ export default function ManageSubCategories() {
                   spacing={2}>
                   <Grid item md={12} xs={12}>
                      <AutoCompleteModule
+                        id='subcat1'
                         label='Choose a Parent Category'
-                        options={parentcat}
-                        value={autoComVal}
-                        setValue={setAutoComVal}
-                        setInputValue={setautoComInputValue}
+                        options={options}
+                        value={selected}
+                        setValue={setSelected}
+                        inputValue={SelectionOnChange}
+                        setInputValue={setSelectionOnChange}
                      />
                   </Grid>
                   <Grid item md={12} xs={12}>

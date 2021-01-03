@@ -75,7 +75,7 @@ export default function CategoryWise({ data = null }) {
 
    const goToCategory = id => {
       history.push({
-         pathname: `/admin/shop/cat/${id}`,
+         pathname: `/shop/cat/${id}`,
          state: { category: id }
       });
    };

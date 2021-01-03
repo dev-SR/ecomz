@@ -1,16 +1,19 @@
 //Model/users.js
 const db = require('../db');
-class ProductRepo {
+class ProductsRepo {
    //crete Instance of a user
 
-   //Create New Categories
-   static async getAllCategories() {
-      const { rows } = await db.query('SELECT * FROM get_categories();');
+   //Get all Products
+   static async getAllProducts(page, limit) {
+      const { rows } = await db.query('SELECT * FROM get_products($1,$2);', [
+         page,
+         limit
+      ]);
       return rows;
    }
 
-   //Create New Categories
-   static async findCategories(newCat) {
+   //Create New Products
+   static async findProducts(newCat) {
       const { rows } = await db.query('SELECT * FROM findCategory($1);', [
          newCat
       ]);
@@ -18,18 +21,50 @@ class ProductRepo {
       return rows[0].findcategory;
    }
 
-   //Create New Categories
-   static async createCategories(newCat, image) {
-      const { rows } = await db.query(
-         'SELECT * FROM create_categories($1,$2);',
-         [newCat, image]
+   //Create New Products
+   static async createProducts(p) {
+      const {
+         u_id,
+         p_name,
+         descp,
+         img,
+         p_price,
+         p_relase,
+         catid,
+         subcatid,
+         brandid,
+         p_color = 'Black and White',
+         p_quantity = 1,
+         p_discount = 0,
+         p_sold = 0
+      } = p;
+
+      const {
+         rows
+      } = await db.query(
+         'SELECT * FROM create_product($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);',
+         [
+            u_id,
+            p_name,
+            descp,
+            img,
+            p_price,
+            p_relase,
+            catid,
+            subcatid,
+            brandid,
+            p_color,
+            p_quantity,
+            p_discount,
+            p_sold
+         ]
       );
       // console.log(rows);
       return rows;
    }
 
-   //Update  Categories
-   static async updateCategories(id, editName, editImage) {
+   //Update  Products
+   static async updateProducts(id, editName, editImage) {
       const {
          rows
       } = await db.query('SELECT * FROM update_categories($1,$2,$3);', [
@@ -42,52 +77,13 @@ class ProductRepo {
    }
 
    //Delete  Categories
-   static async deleteCategory(id) {
+   static async deleteProducts(id) {
       const {
          rows
       } = await db.query('SELECT * FROM detete_from_Categories($1);', [id]);
       // console.log(rows);
       return rows;
    }
-
-   //Create New Categories
-   static async getAllSubCategories() {
-      const { rows } = await db.query('SELECT * FROM get_sub_categories();');
-      return rows;
-   }
-
-   //Create New Categories
-   static async createSubCategories(p_name, newCat) {
-      const {
-         rows
-      } = await db.query(
-         'SELECT * FROM create_sub_categories_with_parent_name($1,$2);',
-         [p_name, newCat]
-      );
-      // console.log(rows);
-      return rows;
-   }
-
-   //Update  Categories
-   static async updateSubCategories(id, editName) {
-      const {
-         rows
-      } = await db.query('SELECT * FROM update_sub_categories($1,$2);', [
-         id,
-         editName
-      ]);
-      // console.log(rows);
-      return rows;
-   }
-
-   //Delete  Categories
-   static async deleteSubCategory(id) {
-      const {
-         rows
-      } = await db.query('SELECT * FROM detete_from_SubCategories($1);', [id]);
-      // console.log(rows);
-      return rows;
-   }
 }
 
-module.exports = CategoryRepo;
+module.exports = ProductsRepo;

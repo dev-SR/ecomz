@@ -80,7 +80,7 @@ export default function UpdateBrands() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Update Brands'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <Grid

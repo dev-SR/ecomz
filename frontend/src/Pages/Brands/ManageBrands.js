@@ -111,7 +111,7 @@ export default function ManageBrands() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Manage Brands'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <form

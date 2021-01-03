@@ -7,11 +7,31 @@ import Input, { useInput } from '../../Components/Abstraction/Input';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import { useDispatch, useSelector } from 'react-redux';
-
+import {
+   TableBody,
+   TableRow,
+   TableCell,
+   Toolbar,
+   InputAdornment
+} from '@material-ui/core';
+import { Search } from '@material-ui/icons';
+import AddIcon from '@material-ui/icons/Add';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import Snackbar, { useSnackBar } from '../../Components/Reusable/SnackBar';
 import Loader, { useLoader } from '../../Components/Reusable/Loader';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useLocation } from 'react-router-dom';
+import {
+   getCategories,
+   getSubCategories
+} from '../../Redux/actions/category-action';
+import AutoComplete from '../../Components/Abstraction/AutoComplete';
+import {
+   convertAccordingToProperty,
+   getAutoCompleteOptions
+} from '../../Utils/modify';
+import useTable from '../../Components/Reusable/useTable';
 
 const useStyles = makeStyles(theme => ({
    paper: {
@@ -42,11 +62,49 @@ const initialValue = {
    Discount: 0,
    Sold: 0
 };
-const parent = [];
+const headCells = [
+   { id: 'id', label: 'ID' },
+   { id: 'subcat', label: 'SUB CATEGORY' }
+];
 export default function ManageSubCategories() {
    const classes = useStyles();
    const dispatch = useDispatch();
    const history = useHistory();
+
+   const c = useSelector(s => s.category);
+   const { cat } = c;
+   const [catOptions, setCatOptions] = useState([]);
+   const [catSelected, setCatSelected] = useState([0]);
+   const [catSelectionChange, setCatSelectionChange] = React.useState('');
+   const sc = useSelector(s => s.subcategory);
+   const { subcat } = sc;
+   const [subcatOptions, setSubCatOptions] = useState([]);
+   const [subcatSelected, setSubCatSelected] = useState([0]);
+   const [subcatSelectionChange, setSubCatSelectionChange] = React.useState('');
+   useEffect(() => {
+      if (cat) {
+         const newObj_With_Property_AS_CATNAME = convertAccordingToProperty(
+            cat,
+            'cat_name'
+         );
+         const catSelectionArray = getAutoCompleteOptions(
+            newObj_With_Property_AS_CATNAME
+         );
+         setCatOptions(catSelectionArray);
+         setCatSelected(catSelectionArray[0]);
+      }
+      if (subcat) {
+         const newObj_With_Property_AS_SUBCATNAME = convertAccordingToProperty(
+            subcat,
+            'sub_cat_name'
+         );
+         const subcatSelectionArray = getAutoCompleteOptions(
+            newObj_With_Property_AS_SUBCATNAME
+         );
+         setSubCatOptions(subcatSelectionArray);
+         setSubCatSelected(subcatSelectionArray[0]);
+      }
+   }, [cat, subcat]);
 
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
    const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
@@ -55,7 +113,23 @@ export default function ManageSubCategories() {
    const onChangeQuery = ({ target: { value } }) => {
       setQuery(value);
    };
+   const [records, setRecords] = useState(cat);
+   const [filterFn, setFilterFn] = useState({
+      fn: items => {
+         return items;
+      }
+   });
+   const {
+      TblContainer,
+      TblHead,
+      TblPagination,
+      recordsAfterPagingAndSorting
+   } = useTable(subcat ? subcat : [], headCells, filterFn);
 
+   useEffect(() => {
+      if (!cat) dispatch(getCategories());
+      if (!subcat) dispatch(getSubCategories());
+   }, []);
    const { inputState, onChangeHandler } = useInput(initialValue);
 
    // useEffect(() => {
@@ -77,13 +151,22 @@ export default function ManageSubCategories() {
 
    const handleEdit = (id, name) => {
       history.push({
-         pathname: `/product/${id}`,
+         pathname: `/admin/product/${id}`,
          state: { nameInputValue: name }
       });
    };
 
    const submitHandler = async e => {
       e.preventDefault();
+      const CatFound = cat.find(item => item.cat_name === catSelected);
+      const { cat_id } = CatFound;
+      console.log(cat_id);
+      const SubCatFound = subcat.find(
+         item => item.sub_cat_name === subcatSelected
+      );
+      const { sub_cat_id } = SubCatFound;
+      console.log(sub_cat_id);
+      console.log(subcatSelected);
       console.log(inputState);
    };
 
@@ -92,7 +175,7 @@ export default function ManageSubCategories() {
          <Layout
             expandable={true}
             drawerData={DrawerDataAdmin}
-            title='Admin'
+            title='Manage Products'
             withNav={<AdminNav />}>
             <Paper className={classes.paper}>
                <form
@@ -133,16 +216,44 @@ export default function ManageSubCategories() {
                               label={name}
                               name={name}
                               value={value}
-                              multiline={name === 'description' ? true : null}
-                              type={name === 'price' ? 'number' : null}
+                              multiline={name === 'Description' ? true : null}
+                              type={
+                                 name === 'Price' ||
+                                 name === 'Quantity' ||
+                                 name === 'Discount' ||
+                                 name === 'Sold'
+                                    ? 'number'
+                                    : null
+                              }
                               placeholder={
-                                 name === 'release_date' ? 'yyyy-mm-dd' : null
+                                 name === 'Release_date' ? 'yyyy-mm-dd' : null
                               }
                               onChange={onChangeHandler}
                            />
                         </Grid>
                      ))}
-
+                     <Grid item md={3} xs={12}>
+                        <AutoComplete
+                           id='catp1'
+                           label='Choose a Parent Category'
+                           options={catOptions}
+                           value={catSelected}
+                           setValue={setCatSelected}
+                           inputValue={catSelectionChange}
+                           setInputValue={setCatSelectionChange}
+                        />
+                     </Grid>
+                     <Grid item md={3} xs={12}>
+                        <AutoComplete
+                           id='catp2'
+                           label='Choose a Sub Category'
+                           options={subcatOptions}
+                           value={subcatSelected}
+                           setValue={setSubCatSelected}
+                           inputValue={subcatSelectionChange}
+                           setInputValue={setSubCatSelectionChange}
+                        />
+                     </Grid>
                      <Grid item md={12} xs={12}>
                         <Button
                            type='submit'
@@ -164,6 +275,37 @@ export default function ManageSubCategories() {
                   </Grid>
                </form>
             </Paper>
+
+            <Paper className={classes.paper}>
+               <TblContainer>
+                  <TblHead />
+                  <TableBody>
+                     {subcat &&
+                        subcat.map((item, index) => (
+                           <TableRow key={index}>
+                              <TableCell>{item.sub_cat_id}</TableCell>
+                              <TableCell>{item.sub_cat_name}</TableCell>
+                              <TableCell>
+                                 <Button
+                                    color='primary'
+                                    onClick={() => handleEdit(item.sub_cat_id)}>
+                                    <EditOutlinedIcon fontSize='small' />
+                                 </Button>
+                                 <Button
+                                    color='secondary'
+                                    onClick={() =>
+                                       handleDelete(item.sub_cat_id)
+                                    }>
+                                    <CloseIcon fontSize='small' />
+                                 </Button>
+                              </TableCell>
+                           </TableRow>
+                        ))}
+                  </TableBody>
+               </TblContainer>
+               <TblPagination />
+            </Paper>
+
             {/* <Snackbar
                severity='error'
                open={s.error ? openSnackBar : null}
