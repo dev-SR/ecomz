@@ -12,6 +12,23 @@ class ProductsRepo {
 
       return rows;
    }
+   //Get Single Product
+   static async getSingleProducts(id) {
+      const { rows } = await db.query('SELECT * FROM get_single_product($1)', [
+         id
+      ]);
+      return rows;
+   }
+
+   //Get all Products
+   static async getAllTopProducts(page, limit) {
+      const { rows } = await db.query('SELECT * FROM get_top_sellers($1,$2);', [
+         page,
+         limit
+      ]);
+      return rows;
+   }
+
    //Get all Products
    static async getTotalProductsCount() {
       const { rows } = await db.query('SELECT count(p_id) FROM products;');
@@ -29,19 +46,19 @@ class ProductsRepo {
    //Create New Products
    static async createProducts(p) {
       const {
-         u_id,
+         uid,
          p_name,
-         descp,
-         img,
+         p_description,
+         p_image,
          p_price,
-         p_relase,
-         catid,
-         subcatid,
-         brandid,
-         p_color = 'Black and White',
-         p_quantity = 1,
-         p_discount = 0,
-         p_sold = 0
+         p_sold,
+         p_quantity,
+         p_release,
+         p_discount,
+         p_color,
+         p_brand,
+         p_cat,
+         p_subcat
       } = p;
 
       const {
@@ -49,15 +66,15 @@ class ProductsRepo {
       } = await db.query(
          'SELECT * FROM create_product($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13);',
          [
-            u_id,
+            uid,
             p_name,
-            descp,
-            img,
+            p_description,
+            p_image,
             p_price,
-            p_relase,
-            catid,
-            subcatid,
-            brandid,
+            p_release,
+            p_cat,
+            p_subcat,
+            p_brand,
             p_color,
             p_quantity,
             p_discount,

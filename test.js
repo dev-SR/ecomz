@@ -244,5 +244,8 @@
 // //  arr.map(keypar=>
 // //  console.log(keypar));
 
-const r = [];
-if (!r.length) console.log(r);
+
+
+let arr = [...Array(4).keys()];
+
+console.log(arr);

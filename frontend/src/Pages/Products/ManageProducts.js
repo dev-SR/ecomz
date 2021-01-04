@@ -24,7 +24,11 @@ import {
    getAutoCompleteOptions
 } from '../../Utils/modify';
 import useTable from '../../Components/Reusable/useTable';
-import { getProducts } from '../../Redux/actions/products-action';
+import {
+   createProducts,
+   getProducts
+} from '../../Redux/actions/products-action';
+import { getBrands } from '../../Redux/actions/brands-action';
 
 const useStyles = makeStyles(theme => ({
    paper: {
@@ -83,16 +87,24 @@ export default function ManageSubCategories() {
    const [subcatOptions, setSubCatOptions] = useState([]);
    const [subcatSelected, setSubCatSelected] = useState([0]);
    const [subcatSelectionChange, setSubCatSelectionChange] = React.useState('');
+   const b = useSelector(s => s.brands);
+   const { brands } = b;
+   const [brandsOptions, setbrandsOptions] = useState([]);
+   const [brandsSelected, setbrandsSelected] = useState([0]);
+   const [brandsSelectionChange, setbrandsSelectionChange] = React.useState('');
 
-   const p = useSelector(s => s.products);
+   const p = useSelector(s => s.productsList);
    const { loading, error, total, products } = p;
 
    useEffect(() => {
       if (!cat) dispatch(getCategories());
       if (!subcat) dispatch(getSubCategories());
+      if (!brands) dispatch(getBrands());
    }, []);
 
-   const { inputState, onChangeHandler } = useInput(initialValue);
+   const { inputState, onChangeHandler, setInputState } = useInput(
+      initialValue
+   );
    useEffect(() => {
       if (cat) {
          const newObj_With_Property_AS_CATNAME = convertAccordingToProperty(
@@ -116,7 +128,18 @@ export default function ManageSubCategories() {
          setSubCatOptions(subcatSelectionArray);
          setSubCatSelected(subcatSelectionArray[0]);
       }
-   }, [cat, subcat]);
+      if (brands) {
+         const newObj_With_Property_AS_BRANDSNAME = convertAccordingToProperty(
+            brands,
+            'brand_name'
+         );
+         const brandsSelectionArray = getAutoCompleteOptions(
+            newObj_With_Property_AS_BRANDSNAME
+         );
+         setbrandsOptions(brandsSelectionArray);
+         setbrandsSelected(brandsSelectionArray[0]);
+      }
+   }, [cat, subcat, brands]);
 
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
    const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
@@ -125,7 +148,6 @@ export default function ManageSubCategories() {
    const onChangeQuery = ({ target: { value } }) => {
       setQuery(value);
    };
-   const [records, setRecords] = useState(cat);
    const [filterFn, setFilterFn] = useState({
       fn: items => {
          return items;
@@ -134,15 +156,8 @@ export default function ManageSubCategories() {
 
    const [ProductFetch, setProductFetch] = useState([]);
 
-   const {
-      TblContainer,
-      TblHead,
-      TblPagination,
-      recordsAfterPagingAndSorting,
-      page,
-      rowsPerPage
-   } = useTable(
-      products ? ProductFetch : [],
+   const { TblContainer, TblHead, TblPagination, page, rowsPerPage } = useTable(
+      ProductFetch,
       headCells,
       products ? total : null,
       filterFn
@@ -156,20 +171,14 @@ export default function ManageSubCategories() {
       console.log(ProductFetch);
       console.log(page);
    }, [page, dispatch, products, ProductFetch]);
-   // useEffect(() => {
-   //    if (loading) setopenLoader(true);
-   //    else setopenLoader(false);
+   useEffect(() => {
+      if (loading) setopenLoader(true);
+      else setopenLoader(false);
 
-   //    if (error) {
-   //       setopenSnackBar(true);
-   //    }
-   //    if (deleted) {
-   //       setopenSnackBar(true);
-   //       setTimeout(() => {
-   //          dispatch(getSubCategories());
-   //       }, 1000);
-   //    }
-   // }, [loading, error, deleted]);
+      if (error) {
+         setopenSnackBar(true);
+      }
+   }, [loading, error]);
 
    const handleDelete = id => {};
 
@@ -179,19 +188,59 @@ export default function ManageSubCategories() {
          state: { nameInputValue: name }
       });
    };
-
+   const handleClick = (id, name) => {
+      history.push({
+         pathname: `/admin/product/${id}`,
+         state: { nameInputValue: name }
+      });
+   };
    const submitHandler = async e => {
       e.preventDefault();
       const CatFound = cat.find(item => item.cat_name === catSelected);
       const { cat_id } = CatFound;
-      console.log(cat_id);
+      // console.log(cat_id);
       const SubCatFound = subcat.find(
          item => item.sub_cat_name === subcatSelected
       );
       const { sub_cat_id } = SubCatFound;
-      console.log(sub_cat_id);
-      console.log(subcatSelected);
-      console.log(inputState);
+      // console.log(sub_cat_id);
+      const BrandsFound = brands.find(
+         item => item.brand_name === brandsSelected
+      );
+      const { brand_id } = BrandsFound;
+      // console.log(brand_id);
+      const {
+         Name,
+         Description,
+         Image,
+         Release_date,
+         Color,
+         Price,
+         Quantity,
+         Discount,
+         Sold
+      } = inputState;
+      const p = Number(Price);
+      const q = Number(Quantity);
+      const d = Number(Discount);
+      const s = Number(Sold);
+
+      const product = {
+         p_name: Name,
+         p_description: Description,
+         p_image: Image,
+         p_price: p,
+         p_sold: s,
+         p_quantity: q,
+         p_release: Release_date,
+         p_discount: d,
+         p_color: Color,
+         p_brand: brand_id,
+         p_cat: cat_id,
+         p_subcat: sub_cat_id
+      };
+      dispatch(createProducts(Number(page + 1), rowsPerPage, product));
+      setInputState(initialValue);
    };
 
    return (
@@ -278,6 +327,17 @@ export default function ManageSubCategories() {
                            setInputValue={setSubCatSelectionChange}
                         />
                      </Grid>
+                     <Grid item md={3} xs={12}>
+                        <AutoComplete
+                           id='catp2'
+                           label='Choose a Brand'
+                           options={brandsOptions}
+                           value={brandsSelected}
+                           setValue={setbrandsSelected}
+                           inputValue={brandsSelectionChange}
+                           setInputValue={setbrandsSelectionChange}
+                        />
+                     </Grid>
                      <Grid item md={12} xs={12}>
                         <Button
                            type='submit'
@@ -299,18 +359,15 @@ export default function ManageSubCategories() {
                   </Grid>
                </form>
             </Paper>
-            {/* "p_id":  "p_name": " "p_description": "p_image":
-            "p_price":  "p_sold": 0, "p_quantity": 1, "p_release":
-          "p_discount": "0", "p_color": "Black and
-            White", "p_brand": "Apple", "p_cat": "Computers & Accessories",
-            "p_subcat */}
             <Paper className={classes.paper}>
                <TblContainer>
                   <TblHead />
                   <TableBody>
                      {ProductFetch &&
                         ProductFetch.map((item, index) => (
-                           <TableRow key={index}>
+                           <TableRow
+                              key={index}
+                              onClick={() => handleClick(item.p_id)}>
                               <TableCell>{`${item.p_name.slice(
                                  0,
                                  25
@@ -342,18 +399,13 @@ export default function ManageSubCategories() {
                </TblContainer>
                <TblPagination />
             </Paper>
-            {/* <Snackbar
-               severity='error'
-               open={s.error ? openSnackBar : null}
-               handleClose={handleSnackBarClose}
-               msg={s.error ? s.error : 'Error Connecting'}
-            />
             <Snackbar
-               severity='success'
-               open={deleted ? openSnackBar : null}
+               severity='error'
+               open={error ? openSnackBar : null}
                handleClose={handleSnackBarClose}
-               msg={`Deleted`}
-            /> */}
+               msg={error ? error : 'Error Connecting'}
+            />
+
             <Loader open={openLoader} handleClose={handleLoaderClose} />
          </Layout>
       </div>

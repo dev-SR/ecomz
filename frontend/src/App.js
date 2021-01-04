@@ -21,6 +21,7 @@ import UpdateSubCategory from './Pages/Categories/UpdateSubCat';
 import ManageBrands from './Pages/Brands/ManageBrands';
 import UpdateBrands from './Pages/Brands/UpdateBrands';
 import ManageShop from './Pages/Shops/ManageShop';
+import ProductScreen from './Pages/Products/ProductScreen';
 
 function App() {
    const [theme] = useToggleTheme();
@@ -35,6 +36,7 @@ function App() {
                <Route exact path='/signin' component={Login} />
                <Route exact path='/register' component={Register} />
                <Route exact path='/shop/all' component={ManageShop} />
+               <Route path='/product/:id' component={ProductScreen} />
                <UserRoute exact path='/profile' component={UserProfile} />
                <AdminRoute exact path='/admin' component={AdminDashBoard} />
                <AdminRoute
@@ -56,6 +58,11 @@ function App() {
                   exact
                   path='/admin/subcategories'
                   component={ManageSubCategories}
+               />
+               <AdminRoute
+                  exact
+                  path='/admin/subcategories/:id'
+                  component={UpdateSubCategory}
                />
                <AdminRoute
                   exact

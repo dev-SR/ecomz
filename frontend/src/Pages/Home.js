@@ -4,6 +4,7 @@ import { Container, Item } from '../Components/Abstraction/Grid';
 import { Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CategoryWise from '../Pages/Products/CategoryWise';
+import TopSeller from '../Pages/Products/TopSeller';
 import { PublicNav } from '../Components/Shared/PublicNav';
 import { UserNav } from '../Components/Shared/UserNav';
 import { AdminNav } from '../Components/Shared/AdminNav';
@@ -77,7 +78,16 @@ export default function Home() {
                         style={{
                            backgroundColor: '#F5F5F5',
                            padding: '15px'
-                        }}></Paper>
+                        }}>
+                        <Typography
+                           variant='h6'
+                           classes={{
+                              root: classes.heading
+                           }}>
+                           Explore by category
+                        </Typography>
+                        <CategoryWise />
+                     </Paper>
                   </Item>
                   <Item xs={12} md={12}>
                      <Paper
@@ -85,7 +95,16 @@ export default function Home() {
                         style={{
                            backgroundColor: '#F5F5F5',
                            padding: '15px'
-                        }}></Paper>
+                        }}>
+                        <Typography
+                           variant='h6'
+                           classes={{
+                              root: classes.heading
+                           }}>
+                           Top Seller
+                        </Typography>
+                        <TopSeller />
+                     </Paper>
                   </Item>
                </Container>
             </div>

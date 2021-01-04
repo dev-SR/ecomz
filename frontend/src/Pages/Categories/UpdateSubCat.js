@@ -65,9 +65,10 @@ export default function UpdateSubCategory() {
       }
       if (updated) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             history.push(`/admin/subcategories`);
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [updated, updateError, loading]);
 

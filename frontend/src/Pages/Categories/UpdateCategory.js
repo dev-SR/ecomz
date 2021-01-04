@@ -66,9 +66,10 @@ export default function UpdateCategory() {
       }
       if (updated) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             history.push(`/admin/categories`);
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [updated, updateError, loading]);
 

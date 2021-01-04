@@ -83,9 +83,10 @@ export default function ManageBrands() {
       }
       if (deleted) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             dispatch(getBrands());
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [loading, error, deleted]);
 

@@ -79,9 +79,10 @@ export default function ManageCategories() {
       }
       if (deleted) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             dispatch(getCategories());
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [loading, error, deleted]);
 

@@ -65,9 +65,10 @@ export default function UpdateBrands() {
       }
       if (updated) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             history.push(`/admin/brands`);
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [updated, updateError, loading]);
 

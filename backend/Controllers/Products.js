@@ -16,8 +16,33 @@ exports.getAllProducts = asyncHandler(async (req, res, next) => {
    const { page, limit } = req.query;
    const r = await ProductsRepo.getAllProducts(page, limit);
    const [t] = await ProductsRepo.getTotalProductsCount();
+   return res.json({ success: true, total: Number(t.count), products: r });
+});
 
-   res.json({ success: true, total: Number(t.count), products: r });
+/**
+ @desc       Get all Products
+ @route      GET: {{URL}}/api/v1/products/top?page=$&limit=$
+ @access     Private Admin
+ */
+exports.getAllTopProducts = asyncHandler(async (req, res, next) => {
+   const { page, limit } = req.query;
+   const r = await ProductsRepo.getAllTopProducts(page, limit);
+   res.json({ success: true, products: r });
+});
+
+/**
+ @desc       Get all Products
+ @route      GET: {{URL}}/api/v1/Products/single/:id
+ @access     Private Admin
+ */
+exports.getProduct = asyncHandler(async (req, res, next) => {
+   const { id } = req.params;
+   // console.log(id);
+   const r = await ProductsRepo.getSingleProducts(id);
+   return res.json({
+      success: true,
+      product: r
+   });
 });
 
 /**
@@ -27,12 +52,15 @@ exports.getAllProducts = asyncHandler(async (req, res, next) => {
  */
 exports.createProducts = asyncHandler(async (req, res, next) => {
    const p = req.body;
-   console.log(p);
+   const { page, limit } = req.query;
+   // console.log(p);
    try {
-      const r = await ProductsRepo.createProducts(p);
-      res.json({ created: true, id: r });
+      const c = await ProductsRepo.createProducts(p);
+      const r = await ProductsRepo.getAllProducts(page, limit);
+      const [t] = await ProductsRepo.getTotalProductsCount();
+      res.json({ success: true, total: Number(t.count), products: r });
    } catch (err) {
-      return next(new ErrorResponse('Brands Already Exits', 500));
+      return next(new ErrorResponse(err.message, 500));
    }
 });
 

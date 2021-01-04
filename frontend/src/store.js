@@ -17,8 +17,10 @@ import {
 } from './Redux/reducer/brands-reducer';
 import {
    productsReducer,
+   productReducer,
    productsUpdateReducer,
-   productsDeleteReducer
+   productsDeleteReducer,
+   topproductsReducer
 } from './Redux/reducer/products-reducer';
 const reducers = combineReducers({
    user: userReducer,
@@ -31,7 +33,9 @@ const reducers = combineReducers({
    brands: brandsReducer,
    updateBrands: brandsUpdateReducer,
    deleteBrands: brandsDeleteReducer,
-   products: productsReducer,
+   productsList: productsReducer,
+   productDetails: productReducer,
+   topproducts: topproductsReducer,
    updateProducts: productsUpdateReducer,
    deleteProducts: productsDeleteReducer
 });

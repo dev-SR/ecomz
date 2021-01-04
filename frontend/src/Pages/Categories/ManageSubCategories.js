@@ -116,9 +116,10 @@ export default function ManageSubCategories() {
       }
       if (deleted) {
          setopenSnackBar(true);
-         setTimeout(() => {
+         const delayed = setTimeout(() => {
             dispatch(getSubCategories());
          }, 1000);
+         return () => clearTimeout(delayed);
       }
    }, [loading, error, deleted]);
 
