@@ -22,6 +22,7 @@ import ManageBrands from './Pages/Brands/ManageBrands';
 import UpdateBrands from './Pages/Brands/UpdateBrands';
 import ManageShop from './Pages/Shops/ManageShop';
 import ProductScreen from './Pages/Products/ProductScreen';
+import CartScreen from './Pages/cart/CartScreen';
 
 function App() {
    const [theme] = useToggleTheme();
@@ -37,6 +38,8 @@ function App() {
                <Route exact path='/register' component={Register} />
                <Route exact path='/shop/all' component={ManageShop} />
                <Route path='/product/:id' component={ProductScreen} />
+               <Route path='/cart' component={CartScreen} />
+               <Route path='/cart/:id' component={CartScreen} />
                <UserRoute exact path='/profile' component={UserProfile} />
                <AdminRoute exact path='/admin' component={AdminDashBoard} />
                <AdminRoute

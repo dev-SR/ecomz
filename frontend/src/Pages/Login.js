@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -77,14 +77,17 @@ export default function SignIn() {
    const dispatch = useDispatch();
    const history = useHistory();
    const user = useSelector(s => s.user);
+   const location = useLocation();
+
    const { loading, success, error } = user;
    const { openSnackBar, handleSnackBarClose, setopenSnackBar } = useSnackBar();
    const { openLoader, handleLoaderClose, setopenLoader } = useLoader();
+   const redirect = location.search ? location.search.split('=')[1] : '/';
 
    const { inputs, onChangeValidate, errorExist } = useForm(initialValue);
    useEffect(() => {
       if (success) {
-         history.push('/');
+         history.push(redirect);
       }
       if (loading) setopenLoader(true);
       else setopenLoader(false);

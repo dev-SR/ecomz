@@ -15,8 +15,9 @@ import {
    DrawerDataPublic
 } from '../../Components/Abstraction/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Slide } from '@material-ui/core';
-
+import { Box, Button, Slide, Typography } from '@material-ui/core';
+import Rating from '@material-ui/lab/Rating';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import Layout from '../../Components/Shared/Layout';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { getProduct } from './../../Redux/actions/products-action';
@@ -76,10 +77,12 @@ export default function ProductScreen() {
    const handleSubmit = () => {
       history.push(`/cart/${id}?qty=${qty}`);
    };
-   console.log(qty);
+   // console.log(qty);
+   const [rating, setRating] = React.useState(2);
+   // console.log(rating);
    return (
       <Layout
-         title='Admin'
+         title='Product'
          drawerData={
             role && token
                ? role === 'admin'
@@ -99,8 +102,8 @@ export default function ProductScreen() {
             )
          }>
          <div className={classes.paper}>
-            <Slide direction='right' in={true} spacing={2}>
-               <Grid container justify='center'>
+            <Slide direction='right' in={true}>
+               <Grid container justify='center' spacing={2}>
                   <Grid item xs={12} md={6}>
                      {item && (
                         <img
@@ -114,7 +117,7 @@ export default function ProductScreen() {
                      <Grid
                         container
                         spacing={2}
-                        justify='center'
+                        justify='flex-end'
                         alignItems='center'>
                         <Grid item xs={12} md={12}>
                            <TableContainer component={Paper}>
@@ -272,6 +275,31 @@ export default function ProductScreen() {
                               onClick={handleSubmit}>
                               Add To Cart
                            </Button>
+                        </Grid>
+                     </Grid>
+                  </Grid>
+                  <Grid item xs={12} md={12}>
+                     <Grid container>
+                        <Grid item xs={12} md={12}>
+                           <Box
+                              component='fieldset'
+                              mb={3}
+                              borderColor='transparent'>
+                              <Typography component='legend'>
+                                 Rate This Product
+                              </Typography>
+                              <Rating
+                                 name='customized-empty'
+                                 value={rating}
+                                 onChange={(event, newValue) => {
+                                    setRating(newValue);
+                                 }}
+                                 precision={0.5}
+                                 emptyIcon={
+                                    <StarBorderIcon fontSize='inherit' />
+                                 }
+                              />
+                           </Box>
                         </Grid>
                      </Grid>
                   </Grid>

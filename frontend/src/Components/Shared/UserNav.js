@@ -9,7 +9,7 @@ import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { Link, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../Redux/actions/user-action';
 import { Menu } from '../Abstraction/Menu';
 
@@ -27,7 +27,10 @@ const userItems = [
    { name: 'ORDERS', to: '/user/orders' }
 ];
 
-export const UserNav = ({ itemcount = 1 }) => {
+export const UserNav = () => {
+   const cart = useSelector(s => s.cart);
+
+   const { cartItems } = cart;
    const { pathname } = useLocation();
    const dispatch = useDispatch();
    const handleSignOut = () => {
@@ -81,13 +84,23 @@ export const UserNav = ({ itemcount = 1 }) => {
          <Grid item xs={2} md={2}>
             {pathname === '/cart' ? (
                <Link to='/cart'>
-                  <Badge badgeContent={itemcount} color='primary'>
+                  <Badge
+                     badgeContent={cartItems.reduce(
+                        (acc, item) => acc + item.qty,
+                        0
+                     )}
+                     color='primary'>
                      <AddShoppingCartIcon style={{ fill: '#4a148c' }} />
                   </Badge>
                </Link>
             ) : (
                <Link to='/cart'>
-                  <Badge badgeContent={itemcount} color='primary'>
+                  <Badge
+                     badgeContent={cartItems.reduce(
+                        (acc, item) => acc + item.qty,
+                        0
+                     )}
+                     color='primary'>
                      <AddShoppingCartIcon style={{ fill: '#212121' }} />
                   </Badge>
                </Link>

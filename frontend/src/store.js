@@ -22,6 +22,7 @@ import {
    productsDeleteReducer,
    topproductsReducer
 } from './Redux/reducer/products-reducer';
+import { cartReducer } from './Redux/reducer/cart-reducer';
 const reducers = combineReducers({
    user: userReducer,
    category: categoryReducer,
@@ -37,13 +38,18 @@ const reducers = combineReducers({
    productDetails: productReducer,
    topproducts: topproductsReducer,
    updateProducts: productsUpdateReducer,
-   deleteProducts: productsDeleteReducer
+   deleteProducts: productsDeleteReducer,
+   cart: cartReducer
 });
 
+const cartFromStorage = localStorage.getItem('cartItems')
+   ? JSON.parse(localStorage.getItem('cartItems'))
+   : [];
 const initialState = {
    user: localStorage.getItem('userInfo')
       ? JSON.parse(localStorage.getItem('userInfo'))
-      : {}
+      : {},
+   cart: { cartItems: cartFromStorage }
 };
 const middleware = [thunk];
 const store = createStore(

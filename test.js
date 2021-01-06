@@ -246,6 +246,5 @@
 
 
 
-let arr = [...Array(4).keys()];
-
+let arr = [...Array(4).keys()];//[ 0, 1, 2, 3 ]
 console.log(arr);

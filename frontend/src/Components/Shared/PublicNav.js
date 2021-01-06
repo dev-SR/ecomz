@@ -7,6 +7,7 @@ import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import HomeIcon from '@material-ui/icons/Home';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const useStyles = makeStyles(theme => ({
    activebutton: {
       // fontSize: '1rem',
@@ -25,6 +26,9 @@ const useStyles = makeStyles(theme => ({
 export const PublicNav = () => {
    const { pathname } = useLocation();
    const classes = useStyles();
+   const cart = useSelector(s => s.cart);
+
+   const { cartItems } = cart;
    return (
       <Grid container justify='flex-end' alignItems='center' spacing={2}>
          <Grid item>
@@ -59,13 +63,23 @@ export const PublicNav = () => {
          <Grid item>
             {pathname === '/cart' ? (
                <Link to='/cart'>
-                  <Badge badgeContent={4} color='primary'>
+                  <Badge
+                     badgeContent={cartItems.reduce(
+                        (acc, item) => acc + item.qty,
+                        0
+                     )}
+                     color='primary'>
                      <AddShoppingCartIcon style={{ fill: '#4a148c' }} />
                   </Badge>
                </Link>
             ) : (
                <Link to='/cart'>
-                  <Badge badgeContent={4} color='primary'>
+                  <Badge
+                     badgeContent={cartItems.reduce(
+                        (acc, item) => acc + item.qty,
+                        0
+                     )}
+                     color='primary'>
                      <AddShoppingCartIcon style={{ fill: '#212121' }} />
                   </Badge>
                </Link>
