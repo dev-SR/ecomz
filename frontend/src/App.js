@@ -38,8 +38,7 @@ function App() {
                <Route exact path='/register' component={Register} />
                <Route exact path='/shop/all' component={ManageShop} />
                <Route path='/product/:id' component={ProductScreen} />
-               <Route path='/cart' component={CartScreen} />
-               <Route path='/cart/:id' component={CartScreen} />
+               <Route path='/cart/:id?' component={CartScreen} />
                <UserRoute exact path='/profile' component={UserProfile} />
                <AdminRoute exact path='/admin' component={AdminDashBoard} />
                <AdminRoute

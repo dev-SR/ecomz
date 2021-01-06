@@ -60,9 +60,9 @@ export default function CartScreen() {
    const location = useLocation();
    const qty = location.search ? Number(location.search.split('=')[1]) : 1;
    const dispatch = useDispatch();
+   console.log(qty);
+   console.log(id);
 
-    
-    
    useEffect(() => {
       if (id) dispatch(addToCart(id, qty));
       //   console.log(cartItems);
