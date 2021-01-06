@@ -60,7 +60,6 @@ export default function ProductScreen() {
    const { product } = p;
    const r = useSelector(s => s.rating);
    const { avg } = r;
-   const [rating, setRating] = useState(0);
 
    const [item, setItem] = useState([]);
    const dispatch = useDispatch();
@@ -69,7 +68,6 @@ export default function ProductScreen() {
    useEffect(() => {
       dispatch(getProduct(id));
       dispatch(getRatingAction(id));
-      if (avg) setRating(Number(avg));
    }, []);
 
    useEffect(() => {
