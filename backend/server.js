@@ -14,6 +14,7 @@ const authRoute = require('./Routes/auth');
 const categoryRoute = require('./Routes/category');
 const brandsRoute = require('./Routes/brands');
 const ProductsRoute = require('./Routes/Products');
+const ReviewRoute = require('./Routes/Review');
 
 //Middleware
 app.use(cors());
@@ -29,6 +30,7 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/category', categoryRoute);
 app.use('/api/v1/brands', brandsRoute);
 app.use('/api/v1/products', ProductsRoute);
+app.use('/api/v1/reviews', ReviewRoute);
 
 //Must be after route to catch Errors.....
 app.use(errorHandler);

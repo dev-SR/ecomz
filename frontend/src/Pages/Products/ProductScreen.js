@@ -30,6 +30,7 @@ import {
    MenuItem,
    FormHelperText
 } from '@material-ui/core';
+import { getRatingAction } from '../../Redux/actions/review-action';
 const useStyles = makeStyles(theme => ({
    paper: {
       marginTop: theme.spacing(8),
@@ -50,19 +51,25 @@ const useStyles = makeStyles(theme => ({
       minHeight: 10
    }
 }));
-
+const input = { comment: '' };
 export default function ProductScreen() {
    const classes = useStyles();
    const user = useSelector(s => s.user);
    const { token, role } = user;
    const p = useSelector(s => s.productDetails);
    const { product } = p;
+   const r = useSelector(s => s.rating);
+   const { avg } = r;
+   const [rating, setRating] = useState(0);
+
    const [item, setItem] = useState([]);
    const dispatch = useDispatch();
    const history = useHistory();
    const { id } = useParams();
    useEffect(() => {
       dispatch(getProduct(id));
+      dispatch(getRatingAction(id));
+      if (avg) setRating(Number(avg));
    }, []);
 
    useEffect(() => {
@@ -71,14 +78,14 @@ export default function ProductScreen() {
 
    const [qty, setQty] = React.useState(1);
 
-   const handleChange = event => {
+   const addToCart = event => {
       setQty(event.target.value);
    };
    const handleSubmit = () => {
       history.push(`/cart/${id}?qty=${qty}`);
    };
    // console.log(qty);
-   const [rating, setRating] = React.useState(2);
+   const [newrating, setNewRating] = React.useState(2);
    // console.log(rating);
    return (
       <Layout
@@ -237,6 +244,25 @@ export default function ProductScreen() {
                                                    item.p_release.slice(0, 10)}
                                              </TableCell>
                                           </TableRow>
+                                          <TableRow>
+                                             <TableCell
+                                                component='th'
+                                                scope='row'>
+                                                Rating
+                                             </TableCell>
+                                             <TableCell
+                                                component='th'
+                                                scope='row'>
+                                                <Rating
+                                                   name='customized-empty'
+                                                   value={avg}
+                                                   precision={0.5}
+                                                   emptyIcon={
+                                                      <StarBorderIcon fontSize='inherit' />
+                                                   }
+                                                />
+                                             </TableCell>
+                                          </TableRow>
                                        </>
                                     )}
                                  </TableBody>
@@ -254,7 +280,7 @@ export default function ProductScreen() {
                                  name='qty'
                                  value={qty}
                                  classes={{ select: classes.select }}
-                                 onChange={handleChange}>
+                                 onChange={addToCart}>
                                  {item.p_quantity &&
                                     [...Array(item.p_quantity).keys()].map(
                                        item => (
@@ -279,29 +305,33 @@ export default function ProductScreen() {
                      </Grid>
                   </Grid>
                   <Grid item xs={12} md={12}>
-                     <Grid container>
-                        <Grid item xs={12} md={12}>
-                           <Box
-                              component='fieldset'
-                              mb={3}
-                              borderColor='transparent'>
-                              <Typography component='legend'>
-                                 Rate This Product
-                              </Typography>
-                              <Rating
-                                 name='customized-empty'
-                                 value={rating}
-                                 onChange={(event, newValue) => {
-                                    setRating(newValue);
-                                 }}
-                                 precision={0.5}
-                                 emptyIcon={
-                                    <StarBorderIcon fontSize='inherit' />
-                                 }
-                              />
-                           </Box>
-                        </Grid>
-                     </Grid>
+                     {token && role === 'user' && (
+                        <>
+                           <Grid container>
+                              <Grid item xs={12} md={6}>
+                                 <Box
+                                    component='fieldset'
+                                    mb={3}
+                                    borderColor='transparent'>
+                                    <Typography component='legend'>
+                                       Rate This Product
+                                    </Typography>
+                                    <Rating
+                                       name='customized-empty'
+                                       value={newrating}
+                                       onChange={(event, newValue) => {
+                                          setNewRating(newValue);
+                                       }}
+                                       precision={0.5}
+                                       emptyIcon={
+                                          <StarBorderIcon fontSize='inherit' />
+                                       }
+                                    />
+                                 </Box>
+                              </Grid>
+                           </Grid>
+                        </>
+                     )}
                   </Grid>
                </Grid>
             </Slide>

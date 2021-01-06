@@ -23,6 +23,7 @@ import {
    topproductsReducer
 } from './Redux/reducer/products-reducer';
 import { cartReducer } from './Redux/reducer/cart-reducer';
+import { ratingReducer } from './Redux/reducer/review-reducer';
 const reducers = combineReducers({
    user: userReducer,
    category: categoryReducer,
@@ -39,7 +40,8 @@ const reducers = combineReducers({
    topproducts: topproductsReducer,
    updateProducts: productsUpdateReducer,
    deleteProducts: productsDeleteReducer,
-   cart: cartReducer
+   cart: cartReducer,
+   rating: ratingReducer
 });
 
 const cartFromStorage = localStorage.getItem('cartItems')
